@@ -63,6 +63,7 @@ CREATE TABLE IF NOT EXISTS users
     phone      VARCHAR,
     start_date DATE,
     role       INT,
+    password   varchar,
     CONSTRAINT users_ck UNIQUE (first_name, last_name, phone),
     CONSTRAINT users_ck2 UNIQUE (first_name, last_name, phone, address)
 );
