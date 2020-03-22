@@ -1,6 +1,6 @@
 import random
 import string
-
+import json
 import psycopg2
 from faker import Faker
 import HelperMethods as helpers
@@ -10,17 +10,24 @@ faker = Faker()
 
 
 def get_database_connection():
+    with open("creds.json", "r") as creds_file:
+        creds = json.loads(creds_file.read())
+
     try:
         con = psycopg2.connect(
             host="rajje.db.elephantsql.com",
-            database='dmuhvnag',
-            user='dmuhvnag',
-            password='Pibk3nJehuU-kusJpY0PoC0Ad96Sgjqb'
+            database=creds["database"],
+            user=creds["user"],
+            password=creds["password"]
         )
         return con
     except psycopg2.DatabaseError as e:
         print(f'Error {e}')
         exit(1)
+    except Exception as e:
+        print(f'Error {e}')
+        exit(1)
+
 
 
 def select_all_from_table(table_name):
@@ -107,7 +114,7 @@ def login(username, password):
     return -1
 
 def main():
-    x = get_user('admin')
+    x = get_user('user')
     print(User(*list(x)))
 
 main()
