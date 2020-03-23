@@ -88,14 +88,14 @@ def get_user(key_term):
     values = dict(key_term=key_term)
     try:
         int(key_term)
-        return execute_query_with_return(
+        return User(*list(execute_query_with_return(
             f"""SELECT FIRST_NAME, LAST_NAME, ADDRESS, PHONE, ID, PASSWORD, START_DATE, ROLE FROM USERS WHERE ID = %(key_term)s""",
-            values, True)
+            values, True)))
 
     except ValueError:
-        return execute_query_with_return(
+        return User(*list(execute_query_with_return(
             f"""SELECT FIRST_NAME, LAST_NAME, ADDRESS, PHONE, ID, PASSWORD, START_DATE, ROLE FROM USERS WHERE USERNAME = %(key_term)s""",
-            values, True)
+            values, True)))
 
 
 def random_string(stringLength=10):
@@ -114,7 +114,8 @@ def login(username, password):
     return -1
 
 def main():
-    x = get_user('user')
-    print(User(*list(x)))
+    # x = get_user('user')
+    print(get_user("ASmith"))
+
 
 main()
