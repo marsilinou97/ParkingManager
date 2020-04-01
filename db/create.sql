@@ -1,134 +1,144 @@
 -- Enum for the days
-CREATE TABLE IF NOT EXISTS days
+CREATE TABLE IF NOT EXISTS DAYS
 (
-    id       SERIAL PRIMARY KEY,
-    day_name VARCHAR
+    ID       SERIAL PRIMARY KEY,
+    DAY_NAME VARCHAR
 );
 
-CREATE TABLE IF NOT EXISTS parking_lot
+CREATE TABLE IF NOT EXISTS PARKING_LOT
 (
-    id       SERIAL PRIMARY KEY,
-    address  VARCHAR,
-    capacity INT,
-    CONSTRAINT address_ck UNIQUE (address)
+    ID       SERIAL PRIMARY KEY,
+    ADDRESS  VARCHAR,
+    CAPACITY INT,
+    CONSTRAINT ADDRESS_CK UNIQUE (ADDRESS)
 );
 
-CREATE TABLE IF NOT EXISTS hours
+CREATE TABLE IF NOT EXISTS HOURS
 (
-    id         SERIAL PRIMARY KEY,
-    open_time  TIME,
-    close_time TIME,
-    day        INT REFERENCES days (id),
-    CONSTRAINT hours_ck UNIQUE (open_time, close_time, day)
+    ID         SERIAL PRIMARY KEY,
+    OPEN_TIME  TIME,
+    CLOSE_TIME TIME,
+    DAY        INT REFERENCES DAYS (ID),
+    CONSTRAINT HOURS_CK UNIQUE (OPEN_TIME, CLOSE_TIME, DAY)
 );
 
-CREATE TABLE IF NOT EXISTS rates
+CREATE TABLE IF NOT EXISTS RATES
 (
-    id          SERIAL PRIMARY KEY,
-    hourly_rate DECIMAL,
-    max_hourly  DECIMAL,
-    flat_rate   DECIMAL,
-    day         INT REFERENCES days (id),
-    CONSTRAINT rates_ck UNIQUE (hourly_rate, max_hourly, flat_rate, day)
+    ID          SERIAL PRIMARY KEY,
+    HOURLY_RATE DECIMAL,
+    MAX_HOURLY  DECIMAL,
+    FLAT_RATE   DECIMAL,
+    DAY         INT REFERENCES DAYS (ID),
+    CONSTRAINT RATES_CK UNIQUE (HOURLY_RATE, MAX_HOURLY, FLAT_RATE, DAY)
 );
 
-CREATE TABLE IF NOT EXISTS parking_lot_rates
+CREATE TABLE IF NOT EXISTS PARKING_LOT_RATES
 (
-    lot_id  INT REFERENCES parking_lot (id),
-    rate_id INT REFERENCES rates (id),
-    CONSTRAINT parking_lot_rates_pk PRIMARY KEY (lot_id, rate_id)
+    LOT_ID  INT REFERENCES PARKING_LOT (ID),
+    RATE_ID INT REFERENCES RATES (ID),
+    CONSTRAINT PARKING_LOT_RATES_PK PRIMARY KEY (LOT_ID, RATE_ID)
 );
 
-CREATE TABLE IF NOT EXISTS parking_lot_hours
+CREATE TABLE IF NOT EXISTS PARKING_LOT_HOURS
 (
-    lot_id   INT REFERENCES parking_lot (id),
-    hours_id INT REFERENCES hours (id),
-    CONSTRAINT parking_lot_hours_pk PRIMARY KEY (lot_id, hours_id)
+    LOT_ID   INT REFERENCES PARKING_LOT (ID),
+    HOURS_ID INT REFERENCES HOURS (ID),
+    CONSTRAINT PARKING_LOT_HOURS_PK PRIMARY KEY (LOT_ID, HOURS_ID)
 );
 
-CREATE TABLE IF NOT EXISTS cars
+CREATE TABLE IF NOT EXISTS CARS
 (
-    id             SERIAL PRIMARY KEY,
-    entry_time     TIME,
-    exit_time      TIME,
-    parking_lot_id INT REFERENCES parking_lot (id)
+    ID             SERIAL PRIMARY KEY,
+    ENTRY_TIME     TIME,
+    EXIT_TIME      TIME,
+    TICKET_NUMBER  VARCHAR NOT NULL,
+    PARKING_LOT_ID INT REFERENCES PARKING_LOT (ID)
 );
 
-CREATE TABLE IF NOT EXISTS users
+CREATE TABLE IF NOT EXISTS USERS
 (
-    id         SERIAL PRIMARY KEY,
-    first_name VARCHAR,
-    last_name  VARCHAR,
-    address    VARCHAR,
-    phone      VARCHAR,
-    start_date DATE,
-    role       INT,
-    CONSTRAINT users_ck UNIQUE (first_name, last_name, phone),
-    CONSTRAINT users_ck2 UNIQUE (first_name, last_name, phone, address)
+    ID         SERIAL PRIMARY KEY,
+    FIRST_NAME VARCHAR,
+    LAST_NAME  VARCHAR,
+    ADDRESS    VARCHAR,
+    PHONE      VARCHAR,
+    START_DATE DATE,
+    ROLE       INT,
+    CONSTRAINT USERS_CK UNIQUE (FIRST_NAME, LAST_NAME, PHONE),
+    CONSTRAINT USERS_CK2 UNIQUE (FIRST_NAME, LAST_NAME, PHONE, ADDRESS)
 );
 
-CREATE TABLE IF NOT EXISTS keycards
+CREATE TABLE IF NOT EXISTS KEYCARDS
 (
-    id               SERIAL PRIMARY KEY,
-    access_type      INT,
-    parking_lot_id   INT REFERENCES parking_lot (id),
-    keycard_owner_id INT REFERENCES users (id),
-    CONSTRAINT keycard_ck UNIQUE (parking_lot_id, keycard_owner_id)
+    ID               SERIAL PRIMARY KEY,
+    ACCESS_TYPE      INT,
+    PARKING_LOT_ID   INT REFERENCES PARKING_LOT (ID),
+    KEYCARD_OWNER_ID INT REFERENCES USERS (ID),
+    CONSTRAINT KEYCARD_CK UNIQUE (PARKING_LOT_ID, KEYCARD_OWNER_ID)
 );
 
-CREATE TABLE IF NOT EXISTS parking_lot_keycards
+CREATE TABLE IF NOT EXISTS PARKING_LOT_KEYCARDS
 (
-    parking_lot_id INT REFERENCES parking_lot (id),
-    keycard_id     INT REFERENCES keycards (id),
-    CONSTRAINT parking_lot_keycards_pk PRIMARY KEY (parking_lot_id, keycard_id)
-);
-
-
-CREATE TABLE IF NOT EXISTS validation_types
-(
-    id              SERIAL PRIMARY KEY,
-    validation_name VARCHAR
-);
-
-CREATE TABLE IF NOT EXISTS validations
-(
-    id              SERIAL PRIMARY KEY,
-    validation_type INT REFERENCES validation_types (id),
-    start_date      DATE,
-    expiry_date     DATE,
-    date_issued     TIME,
-    parking_lot_id  INT REFERENCES parking_lot (id)
-);
-
-CREATE TABLE IF NOT EXISTS report
-(
-    id             SERIAL PRIMARY KEY,
-    issued_on      TIMESTAMP,
-    start_range    TIMESTAMP,
-    end_range      TIMESTAMP,
-    parking_lot_id INT REFERENCES parking_lot (id)
+    PARKING_LOT_ID INT REFERENCES PARKING_LOT (ID),
+    KEYCARD_ID     INT REFERENCES KEYCARDS (ID),
+    CONSTRAINT PARKING_LOT_KEYCARDS_PK PRIMARY KEY (PARKING_LOT_ID, KEYCARD_ID)
 );
 
 
-CREATE TABLE IF NOT EXISTS revenue_categories_list
+CREATE TABLE IF NOT EXISTS VALIDATION_TYPES
 (
-    id                    SERIAL PRIMARY KEY,
-    revenue_category_name VARCHAR
+    ID              SERIAL PRIMARY KEY,
+    VALIDATION_NAME VARCHAR
+);
+
+CREATE TABLE IF NOT EXISTS VALIDATIONS
+(
+    ID              SERIAL PRIMARY KEY,
+    VALIDATION_TYPE INT REFERENCES VALIDATION_TYPES (ID),
+    START_DATE      DATE,
+    EXPIRY_DATE     DATE,
+    DATE_ISSUED     TIME,
+    PARKING_LOT_ID  INT REFERENCES PARKING_LOT (ID)
+);
+
+CREATE TABLE IF NOT EXISTS REPORT
+(
+    ID             SERIAL PRIMARY KEY,
+    ISSUED_ON      TIMESTAMP,
+    START_RANGE    TIMESTAMP,
+    END_RANGE      TIMESTAMP,
+    PARKING_LOT_ID INT REFERENCES PARKING_LOT (ID)
 );
 
 
-CREATE TABLE IF NOT EXISTS revenue_categories
+CREATE TABLE IF NOT EXISTS REVENUE_CATEGORIES_LIST
 (
-    id               SERIAL PRIMARY KEY,
-    revenue_category INT REFERENCES revenue_categories_list (id),
-    quantity         INT
-    revenue          DECIMAL
+    ID                    SERIAL PRIMARY KEY,
+    REVENUE_CATEGORY_NAME VARCHAR
 );
 
 
-CREATE TABLE IF NOT EXISTS reports_revenue_categories
+CREATE TABLE IF NOT EXISTS REVENUE_CATEGORIES
 (
-    revenue_category INT REFERENCES revenue_categories (id),
-    report           INT REFERENCES report (id),
-    CONSTRAINT parking_lot_keycards_pk PRIMARY KEY (report, revenue_category)
+    ID               SERIAL PRIMARY KEY,
+    REVENUE_CATEGORY INT REFERENCES REVENUE_CATEGORIES_LIST (ID),
+    QUANTITY         INT,
+    REVENUE          DECIMAL
+);
+
+
+CREATE TABLE IF NOT EXISTS REPORTS_REVENUE_CATEGORIES
+(
+    REVENUE_CATEGORY INT REFERENCES REVENUE_CATEGORIES (ID),
+    REPORT           INT REFERENCES REPORT (ID),
+    CONSTRAINT PARKING_LOT_KEYCARDS_PK PRIMARY KEY (REPORT, REVENUE_CATEGORY)
+);
+
+CREATE TABLE IF NOT EXISTS PARKING_MOVEMENTS
+(
+    ID            SERIAL,
+    MOVEMENT_TIME TIME,
+    MOVEMENT_TYPE VARCHAR,
+    TICKET_NUMBER VARCHAR REFERENCES CARS (TICKET_NUMBER),
+    AMOUNT        REAL
 );

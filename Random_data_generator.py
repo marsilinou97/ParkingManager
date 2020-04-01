@@ -1,6 +1,7 @@
 from faker import Faker
 import DatabaseDAO as dao
 import HelperMethods as helpers
+import random
 
 faker = Faker()
 
@@ -117,24 +118,41 @@ def generate_report(n=1, parking_lot_id=None):
             print(f"Added report successfully")
 
 
+def generate_car(n=1, parking_lot_id=None):
+    # ENTRY_TIME, EXIT_TIME, PARKING_LOT_ID
+    ticket_prefix = ['K_', 'T_']
+    if not parking_lot_id:
+        parking_lot_id = 1
+    for _ in range(n):
+        entry_time = faker.date_time_between(start_date='-5y', end_date='now')
+        ticket_number = f"{random.choice(ticket_prefix)}" + str(random.randint(1, 99999))
+        res = dao.add_car(entry_time, parking_lot_id, ticket_number)
+        if res["error_msg"]:
+            print(f"Error occurred while adding car: {res}")
+        else:
+            print(f"Added car successfully")
+
+
 def main():
-    # Generates 7 enteries in the DB with with the start and end time, the values are hard-coded and don't change so
-    # running that multiple times will be redundant
-    # generate_hours()
-
-    # Generates random users to the DB
-    generate_users(20)
-
-    # Generate two parking lots and storing their ids to add more data to them
-    ids = generate_parking_lot(n=2, return_ids=True)["ids"]
-
-    for parking_lot_id in ids:
-        # For every parking lot, add to it the following...
-
-        # Create 5 reports, revenue categories will be added to evey report automatically
-        generate_report(n=5, parking_lot_id=parking_lot_id)
-        # Set the start and end time for every parking lot
-        connect_parking_lot_with_hours(parking_lot_id)
+    # add_movement(movement_time, movement_type, ticket_number=None, amount=None, return_id=False):
+    generate_car(10)
+    # # Generates 7 enteries in the DB with with the start and end time, the values are hard-coded and don't change so
+    # # running that multiple times will be redundant
+    # # generate_hours()
+    #
+    # # Generates random users to the DB
+    # generate_users(20)
+    #
+    # # Generate two parking lots and storing their ids to add more data to them
+    # ids = generate_parking_lot(n=2, return_ids=True)["ids"]
+    #
+    # for parking_lot_id in ids:
+    #     # For every parking lot, add to it the following...
+    #
+    #     # Create 5 reports, revenue categories will be added to evey report automatically
+    #     generate_report(n=5, parking_lot_id=parking_lot_id)
+    #     # Set the start and end time for every parking lot
+    #     connect_parking_lot_with_hours(parking_lot_id)
 
 
 if __name__ == '__main__':

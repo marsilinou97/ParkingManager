@@ -1,6 +1,10 @@
+from datetime import datetime
+
 import psycopg2
+
 import HelperMethods as helpers
 import User
+
 
 # ################################### Start DB connection related methods ###################################
 
@@ -85,7 +89,6 @@ def get_user(key_term):
             values, True)))
 
 
-
 # ################################### END User related methods ###################################
 
 
@@ -118,6 +121,21 @@ def connect_parking_lot_with_hours(parking_lot_id=1, hours_id=None):
         values = dict(parking_lot_id=parking_lot_id, hours_id=hours_id)
         query = """insert INTO PARKING_LOT_HOURS (LOT_ID, HOURS_ID) VALUES ( (%(parking_lot_id)s, (%(hours_id)s))"""
         return execute_insert_query(query, values)
+
+    # res = add_movement(time.time(), 'Entry', ticket_number)
+
+
+def add_movement(movement_time, movement_type, ticket_number=None, amount=None, return_id=False):
+    values = dict(movement_time=movement_time, movement_type=movement_type, ticket_number=ticket_number, amount=amount)
+    query = """INSERT INTO PARKING_MOVEMENTS (MOVEMENT_TIME, MOVEMENT_TYPE, TICKET_NUMBER, AMOUNT)
+                VALUES (%(movement_time)s, %(movement_type)s, %(ticket_number)s, %(amount)s)"""
+    return execute_insert_query(query, values, return_id)
+    # if amount:
+    #     query = """INSERT INTO PARKING_MOVEMENTS (MOVEMENT_TIME, MOVEMENT_TYPE, AMOUNT)
+    #                  VALUES ()"""
+    # if ticket_number:
+    #     query = """INSERT INTO PARKING_MOVEMENTS (MOVEMENT_TIME, MOVEMENT_TYPE, TICKET_NUMBER, AMOUNT)
+    #                 VALUES ()"""
 
 
 # ################################### END Parking lot related methods ###################################
@@ -165,11 +183,29 @@ def add_report(start_date, end_date, parking_lot_id, issues_on=None, revenue__ca
 
 def add_revenue_category(revenue_category_name, quantity, revenue, return_id=False):
     values = dict(revenue_category_name=revenue_category_name, quantity=quantity, revenue=revenue)
-    query = """INSERT INTO REVENUE_CATEGORIES (REVENUE_CATEGORY, QUANTITY, REVENUE) VALUES (%(revenue_category_name)s, %(quantity)s, %(revenue)s)"""
+    query = """INSERT INTO REVENUE_CATEGORIES (REVENUE_CATEGORY, QUANTITY, REVENUE) 
+                VALUES (%(revenue_category_name)s, %(quantity)s, %(revenue)s)"""
     return execute_insert_query(query, values, return_id)
 
 
 # ################################### End Parking lot related methods ###################################
+
+# ################################### Start car related methods ###################################
+
+def add_car(entry_time, parking_lot_id, ticket_number, return_id=False):
+    values = dict(entry_time=entry_time, parking_lot_id=parking_lot_id, ticket_number=ticket_number)
+    query = """INSERT INTO CARS (ENTRY_TIME, TICKET_NUMBER, PARKING_LOT_ID)
+                VALUES (%(entry_time)s, %(ticket_number)s, %(parking_lot_id)s)"""
+    adding_car_res = execute_insert_query(query, values, return_id=return_id)
+
+    res = add_movement(datetime.now().strftime("%H:%M:%S"), 'Entry', ticket_number)
+    if res["error_msg"]:
+        print(f"Error occurred while adding parking movement: {res}")
+
+    return adding_car_res
+
+
+# ################################### End car related methods ###################################
 
 
 # ################################### START GENERAL methods ###################################

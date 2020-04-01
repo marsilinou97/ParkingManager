@@ -11,7 +11,6 @@ from RevenueCategory import RevenueCategory
 faker = Faker()
 
 
-
 def get_database_connection():
     with open("creds.json", "r") as creds_file:
         creds = json.loads(creds_file.read())
@@ -38,11 +37,13 @@ def select_all_from_table(table_name):
             curr.execute(f"SELECT * FROM {table_name}")
             return curr.fetchall()
 
+
 def select_all_from_table_filtered(table_name, filter, value):
     with get_database_connection() as connection:
         with connection.cursor() as curr:
             curr.execute(f"SELECT * FROM {table_name} WHERE {filter} = '{value}'")
             return curr.fetchall()
+
 
 def execute_query_with_return(query, parameters, fetch_one=False):
     with get_database_connection() as connection:
@@ -76,6 +77,7 @@ def add_user(first_name, last_name, address, phone, start_date, role):
 
     execute_query(query, values)
 
+
 def add_movement(movement_time, movement_type, ticket_number, amount):
     # Create dic of values
     values = dict(movement_time=movement_time, movement_type=movement_type, ticket_number=ticket_number, amount=amount)
@@ -84,6 +86,7 @@ def add_movement(movement_time, movement_type, ticket_number, amount):
                 VALUES ( %(movement_time)s, %(movement_type)s, %(ticket_number)s, %(amount)s)"""
 
     execute_query(query, values)
+
 
 def add_revenue_category(revenue_category, quantity, revenue):
     values = dict(revenue_category=revenue_category, quantity=quantity, revenue=revenue)
@@ -101,6 +104,7 @@ def add_report(issued_on, start_range, end_range, parking_lot_ID):
 
     execute_query(query, values)
 
+
 def add_reports_revenue_categories(revenue_category, report):
     values = dict(revenue_category=revenue_category, report=report)
 
@@ -108,6 +112,7 @@ def add_reports_revenue_categories(revenue_category, report):
                 VALUES ( %(revenue_category)s, %(report)s)"""
 
     execute_query(query, values)
+
 
 def get_user(key_term):
     values = dict(key_term=key_term)
@@ -147,7 +152,7 @@ def main():
     type1 = "Entry"
     ticketnumber1 = 100
     amount1 = 0
-    add_movement(time1,type1,ticketnumber1,amount1)
+    add_movement(time1, type1, ticketnumber1, amount1)
 
     # Add an exit into the parking lot.
     time2 = datetime(2020, 3, 1, 10, 30, 0)
@@ -161,7 +166,7 @@ def main():
     type3 = "Entry"
     ticketnumber3 = 101
     amount3 = 0
-    add_movement(time3,type3,ticketnumber3,amount3)
+    add_movement(time3, type3, ticketnumber3, amount3)
 
     # Add an exit into the parking lot.
     time4 = datetime(2020, 3, 1, 12, 30, 0)
@@ -170,6 +175,17 @@ def main():
     amount4 = 0
     add_movement(time4, type4, ticketnumber4, amount4)
 
-    print("Done adding test values");
-main();
+    print("Done adding test values")
+
+
+# main()
+
+
+def get_car(ticket_number=None, get_all=False):
+    values = dict(ticket_number=ticket_number)
+    return list(execute_query_with_return(
+        f"""SELECT ENTRY_TIME, EXIT_TIME, PARKING_LOT_ID
+             FROM CARS
+                WHERE USERNAME = %(key_term)s""",
+        values, fetch_one=True))
 
