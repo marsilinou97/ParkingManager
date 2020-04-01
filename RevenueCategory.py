@@ -1,27 +1,27 @@
 class RevenueCategory:
-    def __init__(self, name , quantity, revenue):
-        self._name = name
-        self._quantity = quantity
-        self._revenue = revenue
+    def __init__(self, name, quantity, revenue):
+        self.name = name
+        self.quantity = quantity
+        self.revenue = revenue
 
     def get_name(self):
-        return self.__name
+        return self.name
 
     def get_quantity(self):
-        return self.__quantity
+        return self.quantity
 
     def get_revenue(self):
-        return self.__revenue
+        return self.revenue
 
     def set_name(self, value):
-        self.__name = value
+        self.name = value
 
     def set_quantity(self, value):
-        self.__quantity = value
+        self.quantity = value
 
     def set_revenue(self, value):
-        self.__revenue = value
-    
+        self.revenue = value
+
     def __repr__(self):
-        return self._name + " " + str(self._quantity) + " " + str(self._revenue)
+        return self.name + "\t" + str(self.quantity) + "\t" + str(self.revenue) + "\n"
     

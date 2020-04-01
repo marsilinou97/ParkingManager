@@ -7,7 +7,7 @@ class Car:
         self.entry_time = entry_time
         self.exit_time = exit_time
         self.ticket_number = ticket_number
-        self.logger = Loggers.car_logger
+        self.logger = Loggers.car_XXlogger
 
         self.logger.info("Car created with entry time {}, ticket number {}".format(self.entry_time, self.ticket_number))
 

@@ -121,7 +121,7 @@ CREATE TABLE IF NOT EXISTS revenue_categories
 (
     id               SERIAL PRIMARY KEY,
     revenue_category INT REFERENCES revenue_categories_list (id),
-    quantity         INT,
+    quantity         INT
     revenue          DECIMAL
 );
 
