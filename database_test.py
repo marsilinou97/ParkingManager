@@ -1,66 +1,43 @@
 import random
 import string
-import json
-import psycopg2
-from faker import Faker
-import HelperMethods as helpers
-from User import User
 from datetime import datetime
-from RevenueCategory import RevenueCategory
+from typing import Optional, Union, List
+
+from faker import Faker
+
+import HelperMethods as helpers
+from DbSingleton import DbSingleton
+from User import User
 
 faker = Faker()
 
 
-def get_database_connection():
-    with open("creds.json", "r") as creds_file:
-        creds = json.loads(creds_file.read())
-
-    try:
-        con = psycopg2.connect(
-            host="rajje.db.elephantsql.com",
-            database=creds["database"],
-            user=creds["user"],
-            password=creds["password"]
-        )
-        return con
-    except psycopg2.DatabaseError as e:
-        print(f'Error {e}')
-        exit(1)
-    except Exception as e:
-        print(f'Error {e}')
-        exit(1)
-
-
 def select_all_from_table(table_name):
-    with get_database_connection() as connection:
-        with connection.cursor() as curr:
-            curr.execute(f"SELECT * FROM {table_name}")
-            return curr.fetchall()
+    with DbSingleton.get_connection().cursor() as curr:
+        curr.execute(f"SELECT * FROM {table_name}")
+        return curr.fetchall()
 
 
 def select_all_from_table_filtered(table_name, filter, value):
-    with get_database_connection() as connection:
-        with connection.cursor() as curr:
-            curr.execute(f"SELECT * FROM {table_name} WHERE {filter} = '{value}'")
+    with DbSingleton.get_connection().cursor() as curr:
+        curr.execute(f"SELECT * FROM {table_name} WHERE {filter} = '{value}'")
+        return curr.fetchall()
+
+
+def execute_query_with_return(query, parameters=None, fetch_one=False):
+    with DbSingleton.get_connection().cursor() as curr:
+        curr.execute(f"{query}", parameters)
+        if fetch_one:
+            return curr.fetchone()
+        else:
             return curr.fetchall()
 
 
-def execute_query_with_return(query, parameters, fetch_one=False):
-    with get_database_connection() as connection:
-        with connection.cursor() as curr:
-            curr.execute(f"{query}", parameters)
-            if fetch_one:
-                return curr.fetchone()
-            else:
-                return curr.fetchall()
-
-
 def execute_query(query, parameters=None):
-    with get_database_connection() as connection:
-        with connection.cursor() as curr:
-            # Use parameterized queries to avoid sql injection
-            curr.execute(query, parameters)
-        connection.commit()
+    with DbSingleton.get_connection().cursor() as curr:
+        # Use parameterized queries to avoid sql injection
+        curr.execute(query, parameters)
+    DbSingleton.get_connection().commit()
 
 
 def clear_table(table):
@@ -114,18 +91,33 @@ def add_reports_revenue_categories(revenue_category, report):
     execute_query(query, values)
 
 
-def get_user(key_term):
+def get_user(key_term: Optional[Union[int, str]]) -> Optional[User]:
     values = dict(key_term=key_term)
-    try:
-        int(key_term)
+    if isinstance(key_term, int):
         return User(*list(execute_query_with_return(
-            f"""SELECT FIRST_NAME, LAST_NAME, ADDRESS, PHONE, ID, PASSWORD, START_DATE, ROLE FROM USERS WHERE ID = %(key_term)s""",
+            f"""SELECT FIRST_NAME, LAST_NAME, ADDRESS, PHONE, ID, PASSWORD, START_DATE, ROLE 
+                        FROM USERS WHERE ID = %(key_term)s""",
+            values, True)))
+    else:
+        return User(*list(execute_query_with_return(
+            f"""SELECT FIRST_NAME, LAST_NAME, ADDRESS, PHONE, ID, PASSWORD, START_DATE, ROLE 
+                        FROM USERS WHERE USERNAME = %(key_term)s""",
             values, True)))
 
-    except ValueError:
-        return User(*list(execute_query_with_return(
-            f"""SELECT FIRST_NAME, LAST_NAME, ADDRESS, PHONE, ID, PASSWORD, START_DATE, ROLE FROM USERS WHERE USERNAME = %(key_term)s""",
-            values, True)))
+
+def get_all_users() -> Optional[List[User]]:
+    users = list()
+    res = execute_query_with_return(
+        f"""SELECT FIRST_NAME, LAST_NAME, ADDRESS, PHONE, ID, PASSWORD, START_DATE, ROLE 
+                            FROM USERS""", fetch_one=False)
+    items = ["first_name", "last_name", "address", "phone", "user_id", "password", "start_date", "access_level"]
+    for r in res:
+        v = dict(zip(items, r))
+        users.append(User(**v))
+    return users
+
+
+print(get_all_users())
 
 
 def random_string(stringLength=10):
@@ -133,15 +125,6 @@ def random_string(stringLength=10):
     letters = string.ascii_lowercase
     return ''.join(random.choice(letters) for i in range(stringLength))
 
-
-def login(username, password):
-    values = dict(username=username)
-    query = """SELECT PASSWORD, ROLE FROM USERS WHERE USERNAME = %(username)s"""
-    res = execute_query_with_return(query, values, True)
-    if len(res) > 0:
-        if helpers.verify_password(stored_password=res[0], provided_password=password):
-            return res[1]  # return role if user provides correct creds.
-    return -1
 
 
 def main():
@@ -189,3 +172,17 @@ def get_car(ticket_number=None, get_all=False):
                 WHERE USERNAME = %(key_term)s""",
         values, fetch_one=True))
 
+
+def update_user(values):
+    query = []
+    for k, v in values.items():
+        if v:
+            query.append(f"{k} = %({v}s")
+
+    query = ", ".join(query)
+
+    query = """UPDATE USERS
+                SET 
+                FIRST_NAME=%(FIRST_NAME)s, LAST_NAME=%(LAST_NAME)s, ADDRESS=%(ADDRESS)s, PHONE=%(PHONE)s, START_DATE=%(START_DATE)s, ROLE=%(ROLE)s, PASSWORD=%(PASSWORD)s, USERNAME=%(USERNAME)s
+            WHERE ID = %(user_id)s"""
+    execute_query_with_return(query, values)

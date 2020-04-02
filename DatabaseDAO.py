@@ -1,50 +1,32 @@
 from datetime import datetime
 
-import psycopg2
-
 import HelperMethods as helpers
 import User
+from DbSingleton import DbSingleton
 
 
-# ################################### Start DB connection related methods ###################################
-
-def get_database_connection():
-    try:
-        con = psycopg2.connect(
-            host="rajje.db.elephantsql.com",
-            database='dmuhvnag',
-            user='dmuhvnag',
-            password='Pibk3nJehuU-kusJpY0PoC0Ad96Sgjqb'
-        )
-        return con
-    except psycopg2.DatabaseError as e:
-        print(f'Error {e}')
-        exit(1)
-
-
+# ################################### Start DB related methods ###################################
 def execute_query_with_return(query, parameters=None, fetch_one=False):
-    with get_database_connection() as connection:
-        with connection.cursor() as curr:
-            curr.execute(query, parameters)
-            if fetch_one:
-                return curr.fetchone()
-            else:
-                return curr.fetchall()
+    with DbSingleton.get_connection().cursor() as curr:
+        curr.execute(query, parameters)
+        if fetch_one:
+            return curr.fetchone()
+        else:
+            return curr.fetchall()
 
 
 def execute_insert_query(query, parameters=None, return_id=False):
     return_dict = dict()
     return_dict["error_msg"] = ""
     try:
-        with get_database_connection() as connection:
-            with connection.cursor() as curr:
-                # Use parameterized queries to avoid sql injection
-                if return_id:
-                    query += " RETURNING ID"
-                curr.execute(query, parameters)
-                connection.commit()
-                if return_id:
-                    return_dict["id"] = curr.fetchone()[0]
+        with DbSingleton.get_connection().cursor() as curr:
+            # Use parameterized queries to avoid sql injection
+            if return_id:
+                query += " RETURNING ID"
+            curr.execute(query, parameters)
+            DbSingleton.get_connection().commit()
+            if return_id:
+                return_dict["id"] = curr.fetchone()[0]
     except Exception as e:
         return_dict["error_msg"] = str(e)
     finally:
@@ -70,8 +52,9 @@ def add_user(first_name, last_name, address, phone, start_date, role, password, 
     values = dict(first_name=first_name, last_name=last_name, address=address, phone=phone, start_date=start_date,
                   role=role, password=password, username=username)
     # Build the query to be executed
-    query = """INSERT INTO USERS (FIRST_NAME, LAST_NAME, ADDRESS, PHONE, START_DATE, ROLE, PASSWORD, username)
-                VALUES ( %(first_name)s, %(last_name)s, %(address)s, %(phone)s, %(start_date)s, %(role)s, %(password)s, %(username)s)"""
+    query = """INSERT INTO USERS (FIRST_NAME, LAST_NAME, ADDRESS, PHONE, START_DATE, ROLE, PASSWORD, USERNAME)
+                VALUES ( %(first_name)s, %(last_name)s, %(address)s, 
+                                                    %(phone)s, %(start_date)s, %(role)s, %(password)s, %(username)s)"""
     return execute_insert_query(query, values, return_id)
 
 
@@ -80,13 +63,13 @@ def get_user(key_term):
     try:
         int(key_term)
         return User(*list(execute_query_with_return(
-            f"""SELECT FIRST_NAME, LAST_NAME, ADDRESS, PHONE, ID, PASSWORD, START_DATE, ROLE FROM USERS WHERE id = %(key_term)s""",
-            values, True)))
+            f"""SELECT FIRST_NAME, LAST_NAME, ADDRESS, PHONE, ID, PASSWORD, START_DATE, ROLE 
+                    FROM USERS WHERE ID = %(key_term)s""", values, True)))
 
     except ValueError:
         return User(*list(execute_query_with_return(
-            f"""SELECT FIRST_NAME, LAST_NAME, ADDRESS, PHONE, ID, PASSWORD, START_DATE, ROLE FROM USERS WHERE USERNAME = %(key_term)s""",
-            values, True)))
+            f"""SELECT FIRST_NAME, LAST_NAME, ADDRESS, PHONE, ID, PASSWORD, START_DATE, ROLE 
+                    FROM USERS WHERE USERNAME = %(key_term)s""", values, True)))
 
 
 # ################################### END User related methods ###################################
@@ -95,13 +78,13 @@ def get_user(key_term):
 # ################################### Start Parking lot related methods ###################################
 def add_parking_lot(address, capacity, return_id=False):
     values = dict(address=address, capacity=capacity)
-    query = """insert INTO PARKING_LOTS (address, capacity) VALUES ( %(address)s, %(capacity)s)"""
+    query = """INSERT INTO PARKING_LOTS (ADDRESS, CAPACITY) VALUES ( %(address)s, %(capacity)s)"""
     return execute_insert_query(query, values, return_id)
 
 
 def add_operation_hours(open_time, close_time, day):
     values = dict(open_time=open_time, close_time=close_time, day=day)
-    query = """insert INTO HOURS (open_time, close_time, day) VALUES ( %(open_time)s, %(close_time)s, %(day)s)"""
+    query = """INSERT INTO HOURS (OPEN_TIME, CLOSE_TIME, DAY) VALUES ( %(open_time)s, %(close_time)s, %(day)s)"""
     return execute_insert_query(query, values)
 
 
@@ -119,12 +102,11 @@ def connect_parking_lot_with_hours(parking_lot_id=1, hours_id=None):
         return execute_insert_query(query, values)
     else:
         values = dict(parking_lot_id=parking_lot_id, hours_id=hours_id)
-        query = """insert INTO PARKING_LOT_HOURS (LOT_ID, HOURS_ID) VALUES ( (%(parking_lot_id)s, (%(hours_id)s))"""
+        query = """INSERT INTO PARKING_LOT_HOURS (LOT_ID, HOURS_ID) VALUES ( (%(parking_lot_id)s, (%(hours_id)s))"""
         return execute_insert_query(query, values)
 
-    # res = add_movement(time.time(), 'Entry', ticket_number)
 
-
+# TODO: complete
 def add_movement(movement_time, movement_type, ticket_number=None, amount=None, return_id=False):
     values = dict(movement_time=movement_time, movement_type=movement_type, ticket_number=ticket_number, amount=amount)
     query = """INSERT INTO PARKING_MOVEMENTS (MOVEMENT_TIME, MOVEMENT_TYPE, TICKET_NUMBER, AMOUNT)

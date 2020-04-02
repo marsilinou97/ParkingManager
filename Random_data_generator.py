@@ -135,7 +135,10 @@ def generate_car(n=1, parking_lot_id=None):
 
 def main():
     # add_movement(movement_time, movement_type, ticket_number=None, amount=None, return_id=False):
+    import time
+    start = time.time()
     generate_car(10)
+    print(f"time of executrion: {time.time() - start}")
     # # Generates 7 enteries in the DB with with the start and end time, the values are hard-coded and don't change so
     # # running that multiple times will be redundant
     # # generate_hours()

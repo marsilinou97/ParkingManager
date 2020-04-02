@@ -1,14 +1,14 @@
 class User:
-    def __init__(self, user_first_name, user_last_name, user_address,
-                 user_telephone_number, user_id, user_password, user_start_date, user_access_level):
-        self.__user_first_name = user_first_name
-        self.__user_last_name = user_last_name
-        self.__user_address = user_address
-        self.__user_telephone_number = user_telephone_number
+    def __init__(self, first_name, last_name, address,
+                 phone, user_id, password, start_date, access_level):
+        self.__user_first_name = first_name
+        self.__user_last_name = last_name
+        self.__user_address = address
+        self.__user_telephone_number = phone
         self.__user_id = user_id
-        self.__user_password = user_password
-        self.__user_start_date = user_start_date
-        self.__user_access_level = user_access_level
+        self.__user_password = password
+        self.__user_start_date = start_date
+        self.__user_access_level = access_level
 
     def get_firstname(self):
         """
