@@ -141,7 +141,7 @@ def generate_car(n: int = 1, parking_lot_id=None) -> None:
 
 def main() -> None:
     # add_movement(movement_time, movement_type, ticket_number=None, amount=None, return_id=False):
-    generate_car(10)
+    generate_car(3)
     # # Generates 7 enteries in the DB with with the start and end time, the values are hard-coded and don't change so
     # # running that multiple times will be redundant
     # # generate_hours()

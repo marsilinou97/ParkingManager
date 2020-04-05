@@ -107,10 +107,10 @@ def connect_parking_lot_with_hours(parking_lot_id=1, hours_id=None):
 
 
 # TODO: complete
-def add_movement(movement_time, movement_type, ticket_number=None, amount=None, return_id=False):
-    values = dict(movement_time=movement_time, movement_type=movement_type, ticket_number=ticket_number, amount=amount)
-    query = """INSERT INTO PARKING_MOVEMENTS (MOVEMENT_TIME, MOVEMENT_TYPE, TICKET_NUMBER, AMOUNT)
-                VALUES (%(movement_time)s, %(movement_type)s, %(ticket_number)s, %(amount)s)"""
+def add_movement(movement_time, movement_type, car_id=None, amount=None, return_id=False):
+    values = dict(movement_time=movement_time, movement_type=movement_type, car_id=car_id, amount=amount)
+    query = """INSERT INTO PARKING_MOVEMENTS (MOVEMENT_TIME, MOVEMENT_TYPE, car_id, AMOUNT)
+                VALUES (%(movement_time)s, %(movement_type)s, %(car_id)s, %(amount)s)"""
     return execute_insert_query(query, values, return_id)
     # if amount:
     #     query = """INSERT INTO PARKING_MOVEMENTS (MOVEMENT_TIME, MOVEMENT_TYPE, AMOUNT)

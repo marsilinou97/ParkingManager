@@ -65,7 +65,7 @@ def add_movement(movement_time, movement_type, ticket_number, amount):
     # Create dic of values
     values = dict(movement_time=movement_time, movement_type=movement_type, ticket_number=ticket_number, amount=amount)
     # Build the query to be executed
-    query = """INSERT INTO parking_movements (movement_time, movement_type, ticket_number, amount)
+    query = """INSERT INTO parking_movements (movement_time, movement_type, car_id, amount)
                 VALUES ( %(movement_time)s, %(movement_type)s, %(ticket_number)s, %(amount)s)"""
 
     execute_query(query, values)
