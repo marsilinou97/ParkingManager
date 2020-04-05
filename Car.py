@@ -3,13 +3,14 @@ import Loggers
 
 
 class Car:
-    def __init__(self, entry_time=datetime.datetime.now(), exit_time=None, ticket_number=0):
+    def __init__(self, entry_time=datetime.datetime.now(), exit_time=None, ticket_number=0, car_id=None):
+        self.id = car_id
         self.entry_time = entry_time
         self.exit_time = exit_time
         self.ticket_number = ticket_number
-        self.logger = Loggers.car_XXlogger
+        # self.logger = Loggers.car_XXlogger
 
-        self.logger.info("Car created with entry time {}, ticket number {}".format(self.entry_time, self.ticket_number))
+        # self.logger.info("Car created with entry time {}, ticket number {}".format(self.entry_time, self.ticket_number))
 
     @property
     def get_entry_time(self):

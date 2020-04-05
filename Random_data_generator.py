@@ -1,12 +1,15 @@
+import random
+from typing import Dict, List, Optional, Any
+
 from faker import Faker
+
 import DatabaseDAO as dao
 import HelperMethods as helpers
-import random
 
 faker = Faker()
 
 
-def generate_users(n=5):
+def generate_users(n: int = 5) -> None:
     for _ in range(n):
         # Generate random data
         fn = faker.first_name()
@@ -25,7 +28,7 @@ def generate_users(n=5):
             print(f"Added user successfully")
 
 
-def generate_parking_lot(n=1, return_ids=False):
+def generate_parking_lot(n: int = 1, return_ids: bool = False) -> Dict[str, str]:
     return_dict = dict()
     return_dict["error_msg"] = ""
     return_dict["ids"] = list()
@@ -44,7 +47,7 @@ def generate_parking_lot(n=1, return_ids=False):
     return return_dict
 
 
-def generate_hours():
+def generate_hours() -> None:
     # ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
     error_message = ""
     res = dao.add_operation_hours("7:00", "11:00", 0)
@@ -75,7 +78,7 @@ def generate_hours():
         print("Added hours successfully")
 
 
-def connect_parking_lot_with_hours(parking_lot_id=1, hours_id=None):
+def connect_parking_lot_with_hours(parking_lot_id=1, hours_id=None) -> None:
     if hours_id:
         res = dao.connect_parking_lot_with_hours(parking_lot_id, hours_id)
     else:
@@ -87,13 +90,16 @@ def connect_parking_lot_with_hours(parking_lot_id=1, hours_id=None):
         print("Connected parking lot with hours successfully")
 
 
-def generate_revenue_categories():
+def generate_revenue_categories() -> List[int]:
     added_ids = list()
-    revenue_categories = ["CASH", "CHECK", "Debit", "CREDIT"]
+    payment_categories = ["CASH", "CHECK", "Debit", "CREDIT"]
+    revenue_categories = ["PARKING TRANSACTION W/REVENUE", "KEYCARD TRANSACTION",
+                          "validation transaction", "monthly parkers transaction"]
+    revenue_categories += payment_categories
     for revenue_category_name in revenue_categories:
         quantity = faker.random_int(0, 99999)
         revenue = faker.random_int(0, 99999) / 100
-        res = dao.add_revenue_category(revenue_category_name, quantity, revenue, return_id=True)
+        res = dao.add_revenue_category(revenue_category_name.upper(), quantity, revenue, return_id=True)
         if res["error_msg"]:
             print(f"Error occurred while adding user: {res}")
         else:
@@ -103,7 +109,7 @@ def generate_revenue_categories():
     return added_ids
 
 
-def generate_report(n=1, parking_lot_id=None):
+def generate_report(n: int = 1, parking_lot_id: int = None) -> None:
     for _ in range(n):
         start_date = faker.date_time_between(start_date='-5y', end_date='now')
         end_date = faker.date_time_between(start_date='-5y', end_date='now')
@@ -118,7 +124,7 @@ def generate_report(n=1, parking_lot_id=None):
             print(f"Added report successfully")
 
 
-def generate_car(n=1, parking_lot_id=None):
+def generate_car(n: int = 1, parking_lot_id=None) -> None:
     # ENTRY_TIME, EXIT_TIME, PARKING_LOT_ID
     ticket_prefix = ['K_', 'T_']
     if not parking_lot_id:
@@ -126,19 +132,16 @@ def generate_car(n=1, parking_lot_id=None):
     for _ in range(n):
         entry_time = faker.date_time_between(start_date='-5y', end_date='now')
         ticket_number = f"{random.choice(ticket_prefix)}" + str(random.randint(1, 99999))
-        res = dao.add_car(entry_time, parking_lot_id, ticket_number)
+        res = dao.add_car(entry_time, parking_lot_id, ticket_number, return_id=True)
         if res["error_msg"]:
             print(f"Error occurred while adding car: {res}")
         else:
             print(f"Added car successfully")
 
 
-def main():
+def main() -> None:
     # add_movement(movement_time, movement_type, ticket_number=None, amount=None, return_id=False):
-    import time
-    start = time.time()
     generate_car(10)
-    print(f"time of executrion: {time.time() - start}")
     # # Generates 7 enteries in the DB with with the start and end time, the values are hard-coded and don't change so
     # # running that multiple times will be redundant
     # # generate_hours()
@@ -153,7 +156,7 @@ def main():
     #     # For every parking lot, add to it the following...
     #
     #     # Create 5 reports, revenue categories will be added to evey report automatically
-    #     generate_report(n=5, parking_lot_id=parking_lot_id)
+    # generate_report(n=10, parking_lot_id=1)
     #     # Set the start and end time for every parking lot
     #     connect_parking_lot_with_hours(parking_lot_id)
 

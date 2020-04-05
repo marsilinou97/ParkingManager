@@ -138,24 +138,24 @@ def add_report(start_date, end_date, parking_lot_id, issues_on=None, revenue__ca
         values["issues_on"] = issues_on
         query = """INSERT INTO REPORTS (ISSUED_ON, START_RANGE, END_RANGE, PARKING_LOT_ID) 
             VALUES (%(issues_on)s, %(start_date)s, %(end_date)s, %(parking_lot_id)s) """
-
     else:
         query = """INSERT INTO REPORTS (ISSUED_ON, START_RANGE, END_RANGE, PARKING_LOT_ID) 
                 VALUES (now(), %(start_date)s, %(end_date)s, %(parking_lot_id)s) """
-
     if revenue__category_ids:
         report_res = execute_insert_query(query, values, return_id=True)
-        if "error_msg" in report_res.keys():
+        if report_res["error_msg"]:
             return_dict["error_msg"] = report_res["error_msg"]
             return return_dict
         else:
             report_id = report_res["id"]
         for revenue__category_id in revenue__category_ids:
             res = connect_report_with_category(report_id, revenue__category_id)
-            if "error_msg" in res.keys():
+            if res["error_msg"]:
                 error_msg = f"Error message during connecting report with id: {report_id} with revenue category with id: {revenue__category_id}\n{res['error_msg']}"
                 print(error_msg)
                 return_dict["error_msg"] += error_msg
+            else:
+                print(f"Connected report: {report_id} with revenue category: {revenue__category_id}")
 
     else:
         return_dict = execute_insert_query(query, values)
@@ -180,7 +180,7 @@ def add_car(entry_time, parking_lot_id, ticket_number, return_id=False):
                 VALUES (%(entry_time)s, %(ticket_number)s, %(parking_lot_id)s)"""
     adding_car_res = execute_insert_query(query, values, return_id=return_id)
 
-    res = add_movement(datetime.now().strftime("%H:%M:%S"), 'Entry', ticket_number)
+    res = add_movement(datetime.now().strftime("%H:%M:%S"), 'Entry', adding_car_res["id"])
     if res["error_msg"]:
         print(f"Error occurred while adding parking movement: {res}")
 
