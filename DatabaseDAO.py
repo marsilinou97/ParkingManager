@@ -3,30 +3,35 @@ from datetime import datetime
 import HelperMethods as helpers
 import User
 from DbSingleton import DbSingleton
+from threading import Lock
+
+db_lock = Lock()
 
 
 # ################################### Start DB related methods ###################################
 def execute_query_with_return(query, parameters=None, fetch_one=False):
-    with DbSingleton.get_connection().cursor() as curr:
-        curr.execute(query, parameters)
-        if fetch_one:
-            return curr.fetchone()
-        else:
-            return curr.fetchall()
+    with db_lock:
+        with DbSingleton.get_connection().cursor() as curr:
+            curr.execute(query, parameters)
+            if fetch_one:
+                return curr.fetchone()
+            else:
+                return curr.fetchall()
 
 
 def execute_insert_query(query, parameters=None, return_id=False):
     return_dict = dict()
     return_dict["error_msg"] = ""
     try:
-        with DbSingleton.get_connection().cursor() as curr:
-            # Use parameterized queries to avoid sql injection
-            if return_id:
-                query += " RETURNING ID"
-            curr.execute(query, parameters)
-            DbSingleton.get_connection().commit()
-            if return_id:
-                return_dict["id"] = curr.fetchone()[0]
+        with db_lock:
+            with DbSingleton.get_connection().cursor() as curr:
+                # Use parameterized queries to avoid sql injection
+                if return_id:
+                    query += " RETURNING ID"
+                curr.execute(query, parameters)
+                DbSingleton.get_connection().commit()
+                if return_id:
+                    return_dict["id"] = curr.fetchone()[0]
     except Exception as e:
         return_dict["error_msg"] = str(e)
     finally:
@@ -102,14 +107,14 @@ def connect_parking_lot_with_hours(parking_lot_id=1, hours_id=None):
         return execute_insert_query(query, values)
     else:
         values = dict(parking_lot_id=parking_lot_id, hours_id=hours_id)
-        query = """INSERT INTO PARKING_LOT_HOURS (LOT_ID, HOURS_ID) VALUES ( (%(parking_lot_id)s, (%(hours_id)s))"""
+        query = """INSERT INTO PARKING_LOT_HOURS (LOT_ID, HOURS_ID) VALUES ( (%(parking_lot_id)s, %(hours_id)s))"""
         return execute_insert_query(query, values)
 
 
 # TODO: complete
 def add_movement(movement_time, movement_type, car_id=None, amount=None, return_id=False):
     values = dict(movement_time=movement_time, movement_type=movement_type, car_id=car_id, amount=amount)
-    query = """INSERT INTO PARKING_MOVEMENTS (MOVEMENT_TIME, MOVEMENT_TYPE, car_id, AMOUNT)
+    query = """INSERT INTO PARKING_MOVEMENTS (MOVEMENT_TIME, MOVEMENT_TYPE, CAR_ID, AMOUNT)
                 VALUES (%(movement_time)s, %(movement_type)s, %(car_id)s, %(amount)s)"""
     return execute_insert_query(query, values, return_id)
     # if amount:

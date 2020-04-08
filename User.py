@@ -1,12 +1,10 @@
 class User:
-    def __init__(self, first_name, last_name, address,
-                 phone, user_id, password, start_date, access_level):
+    def __init__(self, first_name, last_name, address, phone, user_id, start_date, access_level):
         self.__user_first_name = first_name
         self.__user_last_name = last_name
         self.__user_address = address
         self.__user_telephone_number = phone
         self.__user_id = user_id
-        self.__user_password = password
         self.__user_start_date = start_date
         self.__user_access_level = access_level
 
@@ -44,13 +42,6 @@ class User:
         @return:
         """
         return self.__user_id
-
-    def get_password(self):
-        """
-
-        @return:
-        """
-        return self.__user_password
 
     def get_start_date(self):
         """
@@ -100,13 +91,6 @@ class User:
         @return:
         """
         self.__user_id = value
-
-    def set_password(self, value):
-        """
-
-        @return:
-        """
-        self.__user_password = value
 
     def set_start_date(self, value):
         """

@@ -4,27 +4,54 @@ from RevenueCategory import RevenueCategory
 from Report import Report
 import datetime
 from RevenueController import total
+import DatabaseDAO as dao
+
+
+def get_report(month: int, year: int, day: int = 1) -> Optional[Report]:
+    values = dict(month=month, year=year, day=day)
+    results = dao.execute_query_with_return(
+        f"""SELECT R.ISSUED_ON, R.START_RANGE, R.END_RANGE, RC.REVENUE_CATEGORY, RC.QUANTITY, RC.REVENUE
+                FROM REPORTS R
+                         INNER JOIN REPORTS_REVENUE_CATEGORIES RRC ON R.ID = RRC.REPORT
+                         INNER JOIN REVENUE_CATEGORIES RC ON RRC.REVENUE_CATEGORY = RC.ID
+                WHERE date_part('day', START_RANGE) = %(day)s
+                  AND date_part('month', START_RANGE) = %(month)s
+                  AND date_part('year', START_RANGE) = %(year)s;""", values, False)
+    revenue_categories = list()
+    payment_categories = list()
+    if len(results) > 0:
+        for result in results:
+            result = result[3:]
+            if result[0].lower() in ['cash', 'debit', 'check', 'card', 'credit']:
+                revenue_categories.append(RevenueCategory(*result))
+            else:
+                payment_categories.append(RevenueCategory(*result))
+        report = Report(*results[0][:3], revenue_categories, payment_categories)
+        print(report)
+    else:
+        print("No matching report")
+
 
 def exportPDF(report):
-    pdf=FPDF()
+    pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Arial", 'B', 16)
-    pdf.cell(0,10,txt= str(report.get_start_range())+"   -   "+str(report.get_end_range()), ln=1, align="C")
+    pdf.cell(0, 10, txt=str(report.get_start_range()) + "   -   " + str(report.get_end_range()), ln=1, align="C")
     pdf.set_font("Arial", 'B', 14)
 
-    pdf.cell(0, 10, "Revenue Report Total",0,0,"L")
+    pdf.cell(0, 10, "Revenue Report Total", 0, 0, "L")
     pdf.set_x(pdf.l_margin)
     pdf.cell(0, 10, "Quantity", 0, 0, "C")
     pdf.set_x(pdf.l_margin)
     pdf.cell(0, 10, "Revenue", 0, 1, "R")
 
-    pdf.set_font("Arial",'' , 14)
+    pdf.set_font("Arial", '', 14)
     for revenuecategory in report.get_revenue_categories():
-        pdf.cell(0,10, txt=str(revenuecategory.get_name()), ln=0, align="L")
+        pdf.cell(0, 10, txt=str(revenuecategory.get_name()), ln=0, align="L")
         pdf.set_x(pdf.l_margin)
-        pdf.cell(0,10, txt=str(revenuecategory.get_quantity()), ln=0, align="C")
+        pdf.cell(0, 10, txt=str(revenuecategory.get_quantity()), ln=0, align="C")
         pdf.set_x(pdf.l_margin)
-        pdf.cell(0,10, txt=str(revenuecategory.get_revenue()), ln=1, align="R")
+        pdf.cell(0, 10, txt=str(revenuecategory.get_revenue()), ln=1, align="R")
 
     pdf.set_font("Arial", 'B', 14)
     pdf.cell(0, 10, "Payment Method", 0, 0, "L")
@@ -41,10 +68,11 @@ def exportPDF(report):
         pdf.set_x(pdf.l_margin)
         pdf.cell(0, 10, txt=str(revenuecategory.get_revenue()), ln=1, align="R")
 
-    pdf.output(str(report.get_issued_on().date())+'.pdf')
+    pdf.output(str(report.get_issued_on().date()) + '.pdf')
+
 
 def exportCSV(report):
-    with open(str(report.get_issued_on().date())+'.csv', 'w', newline='') as file:
+    with open(str(report.get_issued_on().date()) + '.csv', 'w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(["Revenue Report Total", "Quantity", "Revenue"])
         for revenuecategory in report.get_revenue_categories():
@@ -77,4 +105,6 @@ def main():
     print(report1)
     exportPDF(report1)
     exportCSV(report1)
+
+
 main()

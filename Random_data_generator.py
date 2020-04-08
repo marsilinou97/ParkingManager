@@ -1,5 +1,5 @@
 import random
-from typing import Dict, List, Optional, Any
+from typing import Dict, List
 
 from faker import Faker
 
@@ -109,7 +109,7 @@ def generate_revenue_categories() -> List[int]:
     return added_ids
 
 
-def generate_report(n: int = 1, parking_lot_id: int = None) -> None:
+def generate_report(n: int = 1, parking_lot_id: int = 1) -> None:
     for _ in range(n):
         start_date = faker.date_time_between(start_date='-5y', end_date='now')
         end_date = faker.date_time_between(start_date='-5y', end_date='now')
@@ -141,7 +141,7 @@ def generate_car(n: int = 1, parking_lot_id=None) -> None:
 
 def main() -> None:
     # add_movement(movement_time, movement_type, ticket_number=None, amount=None, return_id=False):
-    generate_car(3)
+    # generate_car(50)
     # # Generates 7 enteries in the DB with with the start and end time, the values are hard-coded and don't change so
     # # running that multiple times will be redundant
     # # generate_hours()
@@ -156,7 +156,7 @@ def main() -> None:
     #     # For every parking lot, add to it the following...
     #
     #     # Create 5 reports, revenue categories will be added to evey report automatically
-    # generate_report(n=10, parking_lot_id=1)
+    generate_report(25)
     #     # Set the start and end time for every parking lot
     #     connect_parking_lot_with_hours(parking_lot_id)
 
