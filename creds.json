@@ -1,6 +1,5 @@
 {
-  "host": "rajje.db.elephantsql.com",
   "database": "dmuhvnag",
-  "user": "dmuhvnag",
-  "password": "Pibk3nJehuU-kusJpY0PoC0Ad96Sgjqb"
+  "user":"dmuhvnag",
+  "password":"Pibk3nJehuU-kusJpY0PoC0Ad96Sgjqb"
 }
