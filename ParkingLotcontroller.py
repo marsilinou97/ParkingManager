@@ -1,79 +1,59 @@
-
-from datetime import datetime
-
-import ParkingLot
-from DatabaseDAO import add_car
-from database_test import clear_table, select_all_from_table, display_from_table
+import wx
+import wx.grid as wxGrid
+from DatabaseDAO import *
 
 
-
+# TODO: connect with db
 def entry(parkinglot):
-    parkinglot.set_open_spaces(parkinglot.get_open_spaces()-1)
-    parkinglot.set_occupied_spaces(parkinglot.get_occupied_spaces()+1)
+    parkinglot.set_open_spaces(parkinglot.get_open_spaces() - 1)
+    parkinglot.set_occupied_spaces(parkinglot.get_occupied_spaces() + 1)
 
 
-def main():
-    clear_table("parking_movements")
-    clear_table("cars")
-    # entry_time=datetime.now()
-    # parking_lot_id=1
-    # ticket_number="t100"
-    # add_car(entry_time, parking_lot_id, ticket_number);
-    # add_car(entry_time, parking_lot_id, "t101");
-    # add_car(entry_time, parking_lot_id, "t102");
+def get_parking_movement(number_of_rows: int = 50, ticket_number: str = "%%"):
+    query = """SELECT MOVEMENT_TIME, MOVEMENT_TYPE, TICKET_NUMBER, AMOUNT
+                FROM PARKING_MOVEMENTS PM
+                         INNER JOIN CARS C ON PM.CAR_ID = C.ID
+                WHERE TICKET_NUMBER LIKE %(ticket_number)s
+                ORDER BY MOVEMENT_TIME DESC
+                """
+    if ticket_number != "%%":
+        values = dict(ticket_number="%" + ticket_number + "%")
+    else:
+        values = dict(number_of_rows=number_of_rows, ticket_number=ticket_number)
+        query += " LIMIT %(number_of_rows)s"
 
-    # time1 = datetime(2020, 3, 1, 10, 0, 0)
-    # type1 = "Entry"
-    # ticketnumber1 = "t100"
-    # amount1 = 0
-    # add_movement(time1,type1,ticketnumber1,amount1)
-    #
-    # # Add an exit into the parking lot.
-    # time2 = datetime(2020, 3, 1, 10, 30, 0)
-    # type2 = "Exit"
-    # ticketnumber2 = "t100"
-    # amount2 = 0
-    # add_movement(time2, type2, ticketnumber2, amount2)
-    #
-    # # Add a movement into the parking lot.
-    # time3 = datetime(2020, 3, 1, 11, 30, 0)
-    # type3 = "Entry"
-    # ticketnumber3 = "t101"
-    # amount3 = 0
-    # add_movement(time3,type3,ticketnumber3,amount3)
-    #
-    # # Add an exit into the parking lot.
-    # time4 = datetime(2020, 3, 1, 12, 30, 0)
-    # type4 = "Exit"
-    # ticketnumber4 = "t101"
-    # amount4 = 0
-    # add_movement(time4,type4,ticketnumber4,amount4)
-    #
-    #
-    # # Add a movement into the parking lot.
-    # time5 = datetime(2020, 3, 2, 11, 30, 0)
-    # type5 = "Entry"
-    # ticketnumber5 = "t102"
-    # amount5 = 0
-    # add_movement(time5,type5,ticketnumber5,amount5)
-    #
-    # # Add an exit into the parking lot.
-    # time6 = datetime(2020, 3, 2, 12, 30, 0)
-    # type6 = "Exit"
-    # ticketnumber6 = "t102"
-    # amount6 = 0
-    # add_movement(time6,type6,ticketnumber6,amount6)
-    #
-    # entry_time = datetime.now()
-    # exit_time = datetime(9999, 12, 31, 0, 0, 0)
-    #
-    # add_car(entry_time, exit_time, 1, "t" + str(ticket_number));
+    res = execute_query_with_return(query, values)
+    return [[str(i) for i in row] for row in res]
 
 
+data = get_parking_movement()
 
 
+def add_movement(movement_time, movement_type, car_id=None, amount=None, return_id=False):
+    values = dict(movement_time=movement_time, movement_type=movement_type, car_id=car_id, amount=amount)
+    query = """INSERT INTO PARKING_MOVEMENTS (MOVEMENT_TIME, MOVEMENT_TYPE, CAR_ID, AMOUNT)
+                VALUES (%(movement_time)s, %(movement_type)s, %(car_id)s, %(amount)s)"""
+    return execute_insert_query(query, values, return_id)
 
-main()
-# def exit(self):
-#     parkinglot.set_open_spaces(parkinglot.get_open_spaces() + 1);
-#     parkinglot.set_occupied_spaces(parkinglot.get_occupied_spaces() - 1)
+
+def set_label(grid: wxGrid):
+    labels = ['Date / Time', 'Movement Type', 'Ticket', 'Amount']
+    grid.SetLabelFont(wx.Font(16, 74, 90, 90, False, "Gill Sans MT"))
+    grid.SetLabelBackgroundColour(wx.Colour(64, 64, 64))
+    grid.SetLabelTextColour(wx.Colour(255, 255, 255))
+    for label in range(len(labels)):
+        grid.SetColLabelValue(label, labels[label])
+
+
+def populate_grid(grid: wxGrid):
+    rows = grid.GetNumberRows()
+    cols = grid.GetNumberCols()
+
+    for row in range(rows):
+        for col in range(cols):
+            grid.SetCellValue(row, col, data[row][col])
+
+    set_label(grid)
+
+# print(data)
+# print(len(data))

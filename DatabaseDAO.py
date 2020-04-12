@@ -116,6 +116,7 @@ def add_movement(movement_time, movement_type, car_id=None, amount=None, return_
     values = dict(movement_time=movement_time, movement_type=movement_type, car_id=car_id, amount=amount)
     query = """INSERT INTO PARKING_MOVEMENTS (MOVEMENT_TIME, MOVEMENT_TYPE, CAR_ID, AMOUNT)
                 VALUES (%(movement_time)s, %(movement_type)s, %(car_id)s, %(amount)s)"""
+
     return execute_insert_query(query, values, return_id)
     # if amount:
     #     query = """INSERT INTO PARKING_MOVEMENTS (MOVEMENT_TIME, MOVEMENT_TYPE, AMOUNT)
@@ -135,7 +136,7 @@ def connect_report_with_category(report_id, revenue_category_id):
     return execute_insert_query(query, values)
 
 
-def add_report(start_date, end_date, parking_lot_id, issues_on=None, revenue__category_ids=None):
+def add_report(start_date, end_date, parking_lot_id, issues_on=None, revenue_category_ids=None):
     return_dict = dict()
     return_dict["error_msg"] = ""
     values = dict(start_date=start_date, end_date=end_date, parking_lot_id=parking_lot_id)
@@ -146,14 +147,14 @@ def add_report(start_date, end_date, parking_lot_id, issues_on=None, revenue__ca
     else:
         query = """INSERT INTO REPORTS (ISSUED_ON, START_RANGE, END_RANGE, PARKING_LOT_ID) 
                 VALUES (now(), %(start_date)s, %(end_date)s, %(parking_lot_id)s) """
-    if revenue__category_ids:
+    if revenue_category_ids:
         report_res = execute_insert_query(query, values, return_id=True)
         if report_res["error_msg"]:
             return_dict["error_msg"] = report_res["error_msg"]
             return return_dict
         else:
             report_id = report_res["id"]
-        for revenue__category_id in revenue__category_ids:
+        for revenue__category_id in revenue_category_ids:
             res = connect_report_with_category(report_id, revenue__category_id)
             if res["error_msg"]:
                 error_msg = f"Error message during connecting report with id: {report_id} with revenue category with id: {revenue__category_id}\n{res['error_msg']}"
@@ -179,13 +180,12 @@ def add_revenue_category(revenue_category_name, quantity, revenue, return_id=Fal
 
 # ################################### Start car related methods ###################################
 
-def add_car(entry_time, parking_lot_id, ticket_number, return_id=False):
+def add_car(entry_time, parking_lot_id, ticket_number, amount, return_id=False):
     values = dict(entry_time=entry_time, parking_lot_id=parking_lot_id, ticket_number=ticket_number)
     query = """INSERT INTO CARS (ENTRY_TIME, TICKET_NUMBER, PARKING_LOT_ID)
                 VALUES (%(entry_time)s, %(ticket_number)s, %(parking_lot_id)s)"""
     adding_car_res = execute_insert_query(query, values, return_id=return_id)
-
-    res = add_movement(datetime.now().strftime("%H:%M:%S"), 'Entry', adding_car_res["id"])
+    res = add_movement(datetime.now(), 'Entry', adding_car_res["id"], amount=amount)
     if res["error_msg"]:
         print(f"Error occurred while adding parking movement: {res}")
 
