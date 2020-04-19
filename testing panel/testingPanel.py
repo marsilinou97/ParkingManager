@@ -19,7 +19,11 @@ import random
 class MyFrame1 ( wx.Frame ):
 
 	def __init__( self, parent ):
-		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = wx.EmptyString, pos = wx.DefaultPosition, size = wx.Size( 800, 600 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+		self.m_textCtrl3 = None
+		self.cardPayment = False
+		self.paymentOption = 0
+
+		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = 'Testing Panel', pos = wx.DefaultPosition, size = wx.Size( 800, 600 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
@@ -222,69 +226,60 @@ class MyFrame1 ( wx.Frame ):
 		self.m_dataViewListCtrl4.Bind( wx.dataview.EVT_DATAVIEW_ITEM_ACTIVATED, self.OnCarDoubleClick, id = wx.ID_ANY )
 		self.m_dataViewListCtrl4.Bind( wx.dataview.EVT_DATAVIEW_SELECTION_CHANGED, self.OnCarSelection, id = wx.ID_ANY )
 
-		### dummy data
-		data = []
-		for i in range(20):
-			carID = str(i)
-			status = ''
-			r = random.randint(0, 1)
-			if r == 0:
-				status = 'off lot'
-			else:
-				status = 'on lot'
-			data.append([carID, status])
-
-		for i in range(len(data)):
-			self.m_dataViewListCtrl4.AppendItem(data[i])
-		###
-
 	def __del__( self ):
 		pass
 
-	# Virtual event handlers, overide them in your derived class
+	# Virtual event handlers, override them in your derived class
 	def OnCarDoubleClick( self, event ):
-		print(self.m_dataViewListCtrl4.GetItemData(event.GetItem()))
-		print(self.m_dataViewListCtrl4.GetSelectedRow())
-		rowNo = self.m_dataViewListCtrl4.GetSelectedRow()
-		print(self.m_dataViewListCtrl4.GetValue(rowNo, 0))
-		print(self.m_dataViewListCtrl4.GetValue(rowNo, 1))
+		pass
+		# print(self.m_dataViewListCtrl4.GetItemData(event.GetItem()))
+		# print(self.m_dataViewListCtrl4.GetSelectedRow())
+		# rowNo = self.m_dataViewListCtrl4.GetSelectedRow()
+		# print(self.m_dataViewListCtrl4.GetValue(rowNo, 0))
+		# print(self.m_dataViewListCtrl4.GetValue(rowNo, 1))
 
 	def OnCarSelection(self, event):
 		rowNo = self.m_dataViewListCtrl4.GetSelectedRow()
-		print(rowNo)
 		if rowNo == -1:
 			return None
-		return self.m_dataViewListCtrl4.GetValue(rowNo, 0)
+		return rowNo
 
 	def OnCarEnterClick( self, event ):
+		status = 'on lot'
 		if self.m_radioBtn8.GetValue() == True:
-			ticketNo = self.m_dataViewListCtrl4.GetItemCount()
-			status = 'on lot'
-			self.m_dataViewListCtrl4.AppendItem([str(ticketNo), status])
-			print('entering with ticket:', ticketNo)
+			rand = random.randint(10000, 99999)
+			ticketNo = 't_' + str(rand)
+			self.m_dataViewListCtrl4.AppendItem([ticketNo, status])
 			self.m_radioBtn8.SetValue(False)
 
 		elif self.m_radioBtn9.GetValue() == True:
-			keycardNo = self.m_textCtrl31.Value
+			if self.m_textCtrl31.Value == '':
+				wx.MessageBox('Input keycard number.', 'Message', wx.OK)
+				return
+
+			keycardNo = 'k_' + self.m_textCtrl31.Value
 			items = self.m_dataViewListCtrl4.GetItemCount()
 			for i in range(items):
 				if keycardNo == self.m_dataViewListCtrl4.GetValue(i, 0):
 					if self.m_dataViewListCtrl4.GetValue(i, 1) == 'off lot':
-						self.m_dataViewListCtrl4.SetValue('on lot', i, 1)
+						self.m_dataViewListCtrl4.SetValue(status, i, 1)
+						self.m_radioBtn9.SetValue(False)
+						self.m_staticText41.Disable()
+						self.m_textCtrl31.Disable()
+						self.m_textCtrl31.Value = ''
 						return
 					else:
-						print('keycard already in used. enter another')
+						wx.MessageBox('Keycard already in used. Enter another.', 'Warning', wx.OK | wx.ICON_WARNING)
 						return
 
-			status = 'on lot'
 			self.m_dataViewListCtrl4.AppendItem([keycardNo, status])
-			print('entering with keycard:', keycardNo)
 			self.m_radioBtn9.SetValue(False)
 			self.m_staticText41.Disable()
 			self.m_textCtrl31.Disable()
 			self.m_textCtrl31.Value = ''
+
 		else:
-			print('select ticket or keycard')
+			wx.MessageBox('Need to select keycard or ticket', 'Message', wx.OK)
 
 	def OnTicketEnterBtn( self, event ):
 		self.m_textCtrl31.Value = self.m_textCtrl31.GetLineText(0)
@@ -297,26 +292,63 @@ class MyFrame1 ( wx.Frame ):
 		self.m_textCtrl31.Value = self.m_textCtrl31.GetLineText(0)
 
 	def OnCarExitClick( self, event ):
-		# print(event.GetId())
-		# print(self.OnCarSelection(event))
-		if self.OnCarSelection(event) is None:
-			print('select car first')
+		rowNo = self.OnCarSelection(event)
+		if rowNo is None:
+			wx.MessageBox('Must select a ticket/keycard from list first', 'Message', wx.OK)
 			return
-		if self.m_radioBtn10.GetValue() == False and self.m_radioBtn11.GetValue() == False:
-			print('Need to select keycard or ticket to exit')
+
+		selection = self.m_dataViewListCtrl4.GetValue(rowNo, 0)
+		if self.m_radioBtn10.GetValue() == True:
+			if selection[0] != 'k':
+				wx.MessageBox('Ticket selected. Must select a keycard or switch to ticket option', 'Warning', wx.OK | wx.ICON_WARNING)
+				return
+			self.m_dataViewListCtrl4.SetValue('off lot', rowNo, 1)
+			wx.MessageBox(f'Exiting with keycard: {selection}', 'Message', wx.OK)
+			self.m_radioBtn10.SetValue(False)
+
+		elif self.m_radioBtn11.GetValue() == True:
+			if selection[0] != 't':
+				wx.MessageBox('Keycard selected. Must select a ticket or switch to keycard option', 'Warning', wx.OK | wx.ICON_WARNING)
+				return
+			if self.paymentOption == 0:
+				wx.MessageBox('Select payment option', 'Message', wx.OK)
+				return
+			elif self.paymentOption == 1:
+				if self.m_textCtrl3.Value == '':
+					wx.MessageBox('Input cash amount', 'Message', wx.OK)
+					return
+				wx.MessageBox(f'Exiting with ticket: {selection}\nAmount paid: ${self.m_textCtrl3.Value}', 'Message', wx.OK)
+				self.m_dataViewListCtrl4.SetValue('off lot', rowNo, 1)
+			else:
+				if self.cardPayment == False:
+					wx.MessageBox('Swipe card needed for payment', 'Message', wx.OK)
+					return
+				wx.MessageBox(f'Exiting with ticket: {selection}', 'Message', wx.OK)
+				self.m_dataViewListCtrl4.SetValue('off lot', rowNo, 1)
+
+			self.m_radioBtn11.SetValue(False)
+			self.m_choice3.Disable()
+			self.m_choice3.SetSelection(0)
+			self.paymentOption = 0
+			self.bSizer181.Clear(True)
+
+		else:
+			wx.MessageBox('Need to select keycard/ticket option', 'Message', wx.OK)
 
 	def OnKeycardExitBtn( self, event ):
 		self.m_choice3.Disable()
 		self.m_choice3.SetSelection(0)
+		self.paymentOption = 0
 		self.bSizer181.Clear(True)
 
 	def OnTicketExitBtn( self, event ):
 		self.m_choice3.Enable()
 
 	def OnPaymentChoice( self, event ):
-		print(event.GetSelection())
+		self.paymentOption = event.GetSelection()
+
+		## cash option selected
 		if event.GetSelection() == 1:
-			print('cash selected')
 			self.bSizer181.Clear(True)
 			self.bSizer181.Add((45, 0), 0, wx.EXPAND, 5)
 
@@ -329,20 +361,29 @@ class MyFrame1 ( wx.Frame ):
 			self.bSizer181.Add(self.m_textCtrl3, 0, wx.ALL, 5)
 			self.bSizer181.Layout()
 
+		## credit/debit option selected
 		elif event.GetSelection() == 2:
-			print('credit/debit selected')
 			self.bSizer181.Clear(True)
 			self.bSizer181.Add((45, 0), 0, wx.EXPAND, 5)
 
 			self.m_button5 = wx.Button(self, wx.ID_ANY, u"Swipe card", wx.DefaultPosition, wx.DefaultSize, 0)
+			self.m_button5.Bind(wx.EVT_BUTTON, self.OnCardPayment)
 			self.bSizer181.Add(self.m_button5, 0, wx.ALL, 5)
 			self.bSizer181.Layout()
 
+		else:
+			self.bSizer181.Clear(True)
+			self.bSizer181.Layout()
+
+	def OnCardPayment(self, event):
+		wx.MessageBox('Card swiped!', 'Message', wx.OK)
+		self.cardPayment = True
+
 	def OnGateOpenBtn(self, event):
-		print('gate open')
+		wx.MessageBox('Gate open', 'Message', wx.OK)
 
 	def OnGateCloseBtn(self, event):
-		print('gate close')
+		wx.MessageBox('Gate close', 'Message', wx.OK)
 
 
 def main():
@@ -350,7 +391,7 @@ def main():
 	mainFrame = MyFrame1(None)
 	mainFrame.Show()
 	app.MainLoop()
-
+	
 
 if __name__ == '__main__':
 	main()
