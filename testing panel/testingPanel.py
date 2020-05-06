@@ -11,173 +11,173 @@ import ParkingLotcontroller as lot_controller
 ## Class MyFrame1
 ###########################################################################
 
-class MyFrame1(wx.Frame):
+class TestingFrame(wx.Frame):
 
     def __init__(self, parent):
-        self.m_textCtrl3 = None
-        self.cardPayment = False
-        self.paymentOption = 0
+        self.amount_textbox = None
+        self.payment_option = 0
 
         wx.Frame.__init__(self, parent, id=wx.ID_ANY, title='Testing Panel', pos=wx.DefaultPosition,
                           size=wx.Size(800, 600), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
 
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
 
-        bSizer6 = wx.BoxSizer(wx.VERTICAL)
+        main_sizer = wx.BoxSizer(wx.VERTICAL)
 
-        bSizer2 = wx.BoxSizer(wx.VERTICAL)
+        title_sizer = wx.BoxSizer(wx.VERTICAL)
 
-        self.m_staticText2 = wx.StaticText(self, wx.ID_ANY, u"Lot A", wx.DefaultPosition, wx.DefaultSize, 0)
-        self.m_staticText2.Wrap(-1)
+        self.lot_id = wx.StaticText(self, wx.ID_ANY, u"Lot A", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.lot_id.Wrap(-1)
 
-        self.m_staticText2.SetFont(
+        self.lot_id.SetFont(
             wx.Font(24, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, "Lucida Grande"))
 
-        bSizer2.Add(self.m_staticText2, 0, wx.ALIGN_CENTER_HORIZONTAL, 5)
+        title_sizer.Add(self.lot_id, 0, wx.ALIGN_CENTER_HORIZONTAL, 5)
 
-        bSizer6.Add(bSizer2, 0, wx.EXPAND, 5)
+        main_sizer.Add(title_sizer, 0, wx.EXPAND, 5)
 
-        bSizer3 = wx.BoxSizer(wx.HORIZONTAL)
+        left_right_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        bSizer7 = wx.BoxSizer(wx.VERTICAL)
+        left_side_sizer = wx.BoxSizer(wx.VERTICAL)
 
-        bSizer10 = wx.BoxSizer(wx.VERTICAL)
+        car_enter_sizer = wx.BoxSizer(wx.VERTICAL)
 
-        bSizer10.SetMinSize(wx.Size(-1, 150))
-        self.m_button3 = wx.Button(self, wx.ID_ANY, u"Car enter", wx.DefaultPosition, wx.DefaultSize, 0)
-        bSizer10.Add(self.m_button3, 0, wx.ALL, 5)
+        car_enter_sizer.SetMinSize(wx.Size(-1, 150))
+        self.car_enter_button = wx.Button(self, wx.ID_ANY, u"Car enter", wx.DefaultPosition, wx.DefaultSize, 0)
+        car_enter_sizer.Add(self.car_enter_button, 0, wx.ALL, 5)
 
-        bSizer14 = wx.BoxSizer(wx.VERTICAL)
+        enter_options_sizer = wx.BoxSizer(wx.VERTICAL)
 
-        bSizer17 = wx.BoxSizer(wx.HORIZONTAL)
-        bSizer17.Add((25, 0), 0, wx.EXPAND, 5)
-        self.m_radioBtn8 = wx.RadioButton(self, wx.ID_ANY, u"Ticket", wx.DefaultPosition, wx.DefaultSize, wx.RB_GROUP)
-        bSizer17.Add(self.m_radioBtn8, 0, wx.ALL, 5)
+        enter_ticket_radio_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        enter_ticket_radio_sizer.Add((25, 0), 0, wx.EXPAND, 5)
+        self.ticket_enter_option = wx.RadioButton(self, wx.ID_ANY, u"Ticket", wx.DefaultPosition, wx.DefaultSize, wx.RB_GROUP)
+        enter_ticket_radio_sizer.Add(self.ticket_enter_option, 0, wx.ALL, 5)
 
-        bSizer14.Add(bSizer17, 0, wx.EXPAND, 5)
+        enter_options_sizer.Add(enter_ticket_radio_sizer, 0, wx.EXPAND, 5)
 
-        bSizer18 = wx.BoxSizer(wx.HORIZONTAL)
-        bSizer18.Add((25, 0), 0, wx.EXPAND, 5)
-        self.m_radioBtn9 = wx.RadioButton(self, wx.ID_ANY, u"Keycard", wx.DefaultPosition, wx.DefaultSize, 0)
-        bSizer18.Add(self.m_radioBtn9, 0, wx.ALL, 5)
+        enter_keycard_radio_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        enter_keycard_radio_sizer.Add((25, 0), 0, wx.EXPAND, 5)
+        self.keycard_enter_option = wx.RadioButton(self, wx.ID_ANY, u"Keycard", wx.DefaultPosition, wx.DefaultSize, 0)
+        enter_keycard_radio_sizer.Add(self.keycard_enter_option, 0, wx.ALL, 5)
 
-        bSizer14.Add(bSizer18, 0, wx.EXPAND, 5)
+        enter_options_sizer.Add(enter_keycard_radio_sizer, 0, wx.EXPAND, 5)
 
-        bSizer201 = wx.BoxSizer(wx.HORIZONTAL)
-        bSizer201.Add((45, 0), 0, wx.EXPAND, 5)
-        self.m_staticText41 = wx.StaticText(self, wx.ID_ANY, u"Enter keycard number:", wx.DefaultPosition,
-                                            wx.DefaultSize, 0)
-        self.m_staticText41.Wrap(-1)
-        self.m_staticText41.Disable()
-        bSizer201.Add(self.m_staticText41, 0, wx.ALL, 5)
+        enter_keycard_textbox_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        enter_keycard_textbox_sizer.Add((45, 0), 0, wx.EXPAND, 5)
+        self.keycard_static_text = wx.StaticText(self, wx.ID_ANY, u"Enter keycard number:", wx.DefaultPosition,
+                                                 wx.DefaultSize, 0)
+        self.keycard_static_text.Wrap(-1)
+        self.keycard_static_text.Disable()
+        enter_keycard_textbox_sizer.Add(self.keycard_static_text, 0, wx.ALL, 5)
 
-        self.m_textCtrl31 = wx.TextCtrl(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0)
-        self.m_textCtrl31.Disable()
-        bSizer201.Add(self.m_textCtrl31, 0, wx.ALL, 5)
+        self.keycard_textbox = wx.TextCtrl(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0)
+        self.keycard_textbox.Disable()
+        enter_keycard_textbox_sizer.Add(self.keycard_textbox, 0, wx.ALL, 5)
 
-        bSizer14.Add(bSizer201, 1, wx.EXPAND, 5)
+        enter_options_sizer.Add(enter_keycard_textbox_sizer, 1, wx.EXPAND, 5)
 
-        bSizer10.Add(bSizer14, 1, wx.EXPAND, 5)
+        car_enter_sizer.Add(enter_options_sizer, 1, wx.EXPAND, 5)
 
-        bSizer7.Add(bSizer10, 0, wx.EXPAND, 5)
+        left_side_sizer.Add(car_enter_sizer, 0, wx.EXPAND, 5)
 
-        bSizer11 = wx.BoxSizer(wx.VERTICAL)
+        car_exit_sizer = wx.BoxSizer(wx.VERTICAL)
 
-        bSizer11.SetMinSize(wx.Size(-1, 150))
-        self.m_button4 = wx.Button(self, wx.ID_ANY, u"Car exit", wx.DefaultPosition, wx.DefaultSize, 0)
-        bSizer11.Add(self.m_button4, 0, wx.ALL, 5)
+        car_exit_sizer.SetMinSize(wx.Size(-1, 150))
+        self.car_exit_button = wx.Button(self, wx.ID_ANY, u"Car exit", wx.DefaultPosition, wx.DefaultSize, 0)
+        car_exit_sizer.Add(self.car_exit_button, 0, wx.ALL, 5)
 
-        self.bSizer15 = wx.BoxSizer(wx.VERTICAL)
+        self.car_exit_options_sizer = wx.BoxSizer(wx.VERTICAL)
 
-        bSizer19 = wx.BoxSizer(wx.HORIZONTAL)
-        bSizer19.Add((25, 0), 0, wx.EXPAND, 5)
-        self.m_radioBtn10 = wx.RadioButton(self, wx.ID_ANY, u"Keycard", wx.DefaultPosition, wx.DefaultSize, wx.RB_GROUP)
-        bSizer19.Add(self.m_radioBtn10, 0, wx.ALL, 5)
+        exit_keycard_radio_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        exit_keycard_radio_sizer.Add((25, 0), 0, wx.EXPAND, 5)
+        self.keycard_exit_option = wx.RadioButton(self, wx.ID_ANY, u"Keycard", wx.DefaultPosition, wx.DefaultSize, wx.RB_GROUP)
+        exit_keycard_radio_sizer.Add(self.keycard_exit_option, 0, wx.ALL, 5)
 
-        self.bSizer15.Add(bSizer19, 0, wx.EXPAND, 5)
+        self.car_exit_options_sizer.Add(exit_keycard_radio_sizer, 0, wx.EXPAND, 5)
 
-        bSizer20 = wx.BoxSizer(wx.HORIZONTAL)
-        bSizer20.Add((25, 0), 0, wx.EXPAND, 5)
-        self.m_radioBtn11 = wx.RadioButton(self, wx.ID_ANY, u"Ticket", wx.DefaultPosition, wx.DefaultSize, 0)
-        bSizer20.Add(self.m_radioBtn11, 0, wx.ALL, 5)
+        exit_ticket_radio_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        exit_ticket_radio_sizer.Add((25, 0), 0, wx.EXPAND, 5)
+        self.ticket_exit_option = wx.RadioButton(self, wx.ID_ANY, u"Ticket", wx.DefaultPosition, wx.DefaultSize, 0)
+        exit_ticket_radio_sizer.Add(self.ticket_exit_option, 0, wx.ALL, 5)
 
-        self.bSizer15.Add(bSizer20, 0, wx.EXPAND, 5)
+        self.car_exit_options_sizer.Add(exit_ticket_radio_sizer, 0, wx.EXPAND, 5)
 
-        self.bSizer21 = wx.BoxSizer(wx.HORIZONTAL)
-        self.bSizer15.Add(self.bSizer21, 0, wx.EXPAND, 5)
+        self.exit_ticket_payment_text_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.car_exit_options_sizer.Add(self.exit_ticket_payment_text_sizer, 0, wx.EXPAND, 5)
 
-        self.bSizer171 = wx.BoxSizer(wx.HORIZONTAL)
-        self.bSizer15.Add(self.bSizer171, 0, wx.EXPAND, 5)
+        self.exit_ticket_payment_choices_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.car_exit_options_sizer.Add(self.exit_ticket_payment_choices_sizer, 0, wx.EXPAND, 5)
 
-        self.bSizer181 = wx.BoxSizer(wx.HORIZONTAL)
-        self.bSizer15.Add(self.bSizer181, 0, wx.EXPAND, 5)
+        self.exit_ticket_amount_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.car_exit_options_sizer.Add(self.exit_ticket_amount_sizer, 0, wx.EXPAND, 5)
 
-        self.bSizer191 = wx.BoxSizer(wx.HORIZONTAL)
-        self.bSizer191.Add((25, 0), 0, wx.EXPAND, 5)
-        self.m_radioBtn6 = wx.RadioButton(self, wx.ID_ANY, u"Validation", wx.DefaultPosition, wx.DefaultSize, 0)
-        self.bSizer191.Add(self.m_radioBtn6, 0, wx.ALL, 5)
-        self.bSizer15.Add(self.bSizer191, 0, wx.EXPAND, 5)
+        self.exit_validation_radio_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.exit_validation_radio_sizer.Add((25, 0), 0, wx.EXPAND, 5)
+        self.validation_exit_option = wx.RadioButton(self, wx.ID_ANY, u"Validation", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.exit_validation_radio_sizer.Add(self.validation_exit_option, 0, wx.ALL, 5)
+        self.car_exit_options_sizer.Add(self.exit_validation_radio_sizer, 0, wx.EXPAND, 5)
 
-        self.bSizer211 = wx.BoxSizer(wx.HORIZONTAL)
-        self.bSizer15.Add(self.bSizer211, 0, wx.EXPAND, 5)
+        self.exit_validation_payment_text_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.car_exit_options_sizer.Add(self.exit_validation_payment_text_sizer, 0, wx.EXPAND, 5)
 
-        self.bSizer22 = wx.BoxSizer(wx.HORIZONTAL)
-        self.bSizer15.Add(self.bSizer22, 0, wx.EXPAND, 5)
+        self.exit_validation_payment_choices_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.car_exit_options_sizer.Add(self.exit_validation_payment_choices_sizer, 0, wx.EXPAND, 5)
 
-        self.bSizer23 = wx.BoxSizer(wx.HORIZONTAL)
-        self.bSizer15.Add(self.bSizer23, 0, wx.EXPAND, 5)
+        self.exit_validation_amount_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.car_exit_options_sizer.Add(self.exit_validation_amount_sizer, 0, wx.EXPAND, 5)
 
-        bSizer11.Add(self.bSizer15, 1, wx.EXPAND, 5)
+        car_exit_sizer.Add(self.car_exit_options_sizer, 1, wx.EXPAND, 5)
 
-        bSizer7.Add(bSizer11, 0, wx.EXPAND, 5)
+        left_side_sizer.Add(car_exit_sizer, 0, wx.EXPAND, 5)
 
-        bSizer13 = wx.BoxSizer(wx.HORIZONTAL)
-        self.m_button41 = wx.Button(self, wx.ID_ANY, u"Gate Arm - Open", wx.DefaultPosition, wx.DefaultSize, 0)
-        bSizer13.Add(self.m_button41, 0, wx.ALL, 5)
+        gate_entry_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.entry_gate_radio = wx.RadioBox(self, wx.ID_ANY, u"Entry Gate", wx.DefaultPosition, wx.DefaultSize,
+                                            ['Open', 'Close'], 0, wx.RA_SPECIFY_COLS)
+        gate_entry_sizer.Add(self.entry_gate_radio, 0, wx.ALL, 5)
 
-        self.m_button51 = wx.Button(self, wx.ID_ANY, u"Gate Arm - Close", wx.DefaultPosition, wx.DefaultSize, 0)
-        bSizer13.Add(self.m_button51, 0, wx.ALL, 5)
+        self.exit_gate_radio = wx.RadioBox(self, wx.ID_ANY, u"Exit Gate", wx.DefaultPosition, wx.DefaultSize,
+                                           ['Open', 'Close'], 0, wx.RA_SPECIFY_COLS)
+        gate_entry_sizer.Add(self.exit_gate_radio, 0, wx.ALL, 5)
 
-        bSizer7.Add(bSizer13, 1, wx.EXPAND, 5)
+        left_side_sizer.Add(gate_entry_sizer, 1, wx.EXPAND, 5)
 
-        bSizer3.Add(bSizer7, 1, wx.EXPAND, 5)
+        left_right_sizer.Add(left_side_sizer, 1, wx.EXPAND, 5)
 
-        bSizer8 = wx.BoxSizer(wx.VERTICAL)
+        right_side_sizer = wx.BoxSizer(wx.VERTICAL)
 
-        self.m_dataViewListCtrl4 = wx.dataview.DataViewListCtrl(self, wx.ID_ANY, wx.DefaultPosition, wx.Size(400, 530),
+        self.ticket_keycard_list = wx.dataview.DataViewListCtrl(self, wx.ID_ANY, wx.DefaultPosition, wx.Size(400, 530),
                                                                 0)
-        self.m_dataViewListColumn1 = self.m_dataViewListCtrl4.AppendTextColumn(u"Ticket/Keycard No.",
-                                                                               wx.dataview.DATAVIEW_CELL_ACTIVATABLE,
-                                                                               200, wx.ALIGN_LEFT,
-                                                                               wx.dataview.DATAVIEW_COL_RESIZABLE)
-        self.m_dataViewListColumn2 = self.m_dataViewListCtrl4.AppendTextColumn(u"Status",
-                                                                               wx.dataview.DATAVIEW_CELL_ACTIVATABLE,
-                                                                               200, wx.ALIGN_LEFT,
-                                                                               wx.dataview.DATAVIEW_COL_RESIZABLE)
-        bSizer8.Add(self.m_dataViewListCtrl4, 0, wx.ALL, 5)
+        self.ticket_keycard_list_column_1 = self.ticket_keycard_list.AppendTextColumn(u"Ticket/Keycard No.",
+                                                                                      wx.dataview.DATAVIEW_CELL_ACTIVATABLE,
+                                                                                      200, wx.ALIGN_LEFT,
+                                                                                      wx.dataview.DATAVIEW_COL_RESIZABLE)
+        self.ticket_keycard_list_column_2 = self.ticket_keycard_list.AppendTextColumn(u"Status",
+                                                                                      wx.dataview.DATAVIEW_CELL_ACTIVATABLE,
+                                                                                      200, wx.ALIGN_LEFT,
+                                                                                      wx.dataview.DATAVIEW_COL_RESIZABLE)
+        right_side_sizer.Add(self.ticket_keycard_list, 0, wx.ALL, 5)
 
-        bSizer3.Add(bSizer8, 1, wx.EXPAND, 5)
+        left_right_sizer.Add(right_side_sizer, 1, wx.EXPAND, 5)
 
-        bSizer6.Add(bSizer3, 1, wx.EXPAND, 5)
+        main_sizer.Add(left_right_sizer, 1, wx.EXPAND, 5)
 
-        self.SetSizer(bSizer6)
+        self.SetSizer(main_sizer)
         self.Layout()
 
         self.Centre(wx.BOTH)
 
         # Connect Events
-        self.m_button3.Bind(wx.EVT_BUTTON, self.OnCarEnterClick)
-        self.m_radioBtn8.Bind(wx.EVT_RADIOBUTTON, self.OnTicketEnterBtn)
-        self.m_radioBtn9.Bind(wx.EVT_RADIOBUTTON, self.OnKeycardEnterBtn)
-        self.m_button4.Bind(wx.EVT_BUTTON, self.OnCarExitClick)
-        self.m_radioBtn10.Bind(wx.EVT_RADIOBUTTON, self.OnKeycardExitBtn)
-        self.m_radioBtn11.Bind(wx.EVT_RADIOBUTTON, self.OnTicketExitBtn)
-        self.m_radioBtn6.Bind(wx.EVT_RADIOBUTTON, self.OnValidationExitBtn)
-        self.m_button41.Bind(wx.EVT_BUTTON, self.OnGateOpenBtn)
-        self.m_button51.Bind(wx.EVT_BUTTON, self.OnGateCloseBtn)
-        self.m_dataViewListCtrl4.Bind(wx.dataview.EVT_DATAVIEW_ITEM_ACTIVATED, self.OnCarDoubleClick, id=wx.ID_ANY)
-        self.m_dataViewListCtrl4.Bind(wx.dataview.EVT_DATAVIEW_SELECTION_CHANGED, self.OnCarSelection, id=wx.ID_ANY)
-
+        self.car_enter_button.Bind(wx.EVT_BUTTON, self.OnCarEnterClick)
+        self.ticket_enter_option.Bind(wx.EVT_RADIOBUTTON, self.OnTicketEnterBtn)
+        self.keycard_enter_option.Bind(wx.EVT_RADIOBUTTON, self.OnKeycardEnterBtn)
+        self.car_exit_button.Bind(wx.EVT_BUTTON, self.OnCarExitClick)
+        self.keycard_exit_option.Bind(wx.EVT_RADIOBUTTON, self.OnKeycardExitBtn)
+        self.ticket_exit_option.Bind(wx.EVT_RADIOBUTTON, self.OnTicketExitBtn)
+        self.validation_exit_option.Bind(wx.EVT_RADIOBUTTON, self.OnValidationExitBtn)
+        self.entry_gate_radio.Bind(wx.EVT_RADIOBOX, self.OnEntryGateBox)
+        self.exit_gate_radio.Bind(wx.EVT_RADIOBOX, self.OnExitGateBox)
+        self.ticket_keycard_list.Bind(wx.dataview.EVT_DATAVIEW_ITEM_ACTIVATED, self.OnCarDoubleClick, id=wx.ID_ANY)
+        self.ticket_keycard_list.Bind(wx.dataview.EVT_DATAVIEW_SELECTION_CHANGED, self.OnCarSelection, id=wx.ID_ANY)
 
     def __del__(self):
         pass
@@ -186,67 +186,62 @@ class MyFrame1(wx.Frame):
     def OnCarDoubleClick(self, event):
         pass
 
-    # print(self.m_dataViewListCtrl4.GetItemData(event.GetItem()))
-    # print(self.m_dataViewListCtrl4.GetSelectedRow())
-    # rowNo = self.m_dataViewListCtrl4.GetSelectedRow()
-    # print(self.m_dataViewListCtrl4.GetValue(rowNo, 0))
-    # print(self.m_dataViewListCtrl4.GetValue(rowNo, 1))
-
     def OnCarSelection(self, event):
-        rowNo = self.m_dataViewListCtrl4.GetSelectedRow()
-        if rowNo == -1:
+        row_number = self.ticket_keycard_list.GetSelectedRow()
+        if row_number == -1:
             return None
-        return rowNo
+        return row_number
 
     def OnCarEnterClick(self, event):
-        status = 'on lot'
-        if self.m_radioBtn8.GetValue() == True:
-            ticketNo = car_controller.add_car_with_ticket()
-            self.m_dataViewListCtrl4.AppendItem([ticketNo, status])
-            self.m_radioBtn8.SetValue(False)
+        status = 'On Lot'
+        if self.ticket_enter_option.GetValue() == True:
+            ticket_number = car_controller.add_car_with_ticket()
+            self.ticket_keycard_list.AppendItem([ticket_number, status])
+            self.ticket_enter_option.SetValue(False)
 
-        elif self.m_radioBtn9.GetValue() == True:
-            if self.m_textCtrl31.Value == '':
+        elif self.keycard_enter_option.GetValue() == True:
+            if self.keycard_textbox.Value == '':
                 wx.MessageBox('Input keycard number.', 'Message', wx.OK)
                 return
 
-            keycardNo = self.m_textCtrl31.Value
-            ## Check if keycard exist ##
-            if car_controller.check_existing_keycard(keycardNo):
-                ## Check if keycard exist in lot
-                keycardNo = 'K_' + keycardNo
+            keycard_number = self.keycard_textbox.Value
+            # Check if keycard exist ##
+            if car_controller.check_existing_keycard(keycard_number):
+                # Check if keycard exist in lot
+                keycard_number = 'K_' + keycard_number
                 date_str = '2020-04-24'
                 my_date = datetime.datetime.strptime(date_str, '%Y-%m-%d')
-                lot_controller.ParkingMovementController.get_parking_movement(ticket_number=keycardNo, from_date=my_date)
+                lot_controller.ParkingMovementController.get_parking_movement(ticket_number=keycard_number, from_date=my_date)
                 keycard_history = lot_controller.ParkingMovementController.get_movement_list()
 
                 if keycard_history:
-                    ## Check keycard's latest status
+                    # Check keycard's latest status
                     latest_keycard_status = keycard_history[0][1]
                     if latest_keycard_status == 'Entry':
                         wx.MessageBox('Keycard already in used. Enter another.', 'Warning', wx.OK | wx.ICON_WARNING)
+                        self.ticket_keycard_list.AppendItem([keycard_number, status])
                         return
-                    else: ## keycard has history but not on lot
-                        item_count = self.m_dataViewListCtrl4.GetItemCount()
+                    else: # keycard has history but not on lot
+                        item_count = self.ticket_keycard_list.GetItemCount()
                         items = []
-                        ## Check if keycard in list in panel and change status
+                        # Check if keycard in list in panel and change status
                         for i in range(item_count):
-                            items.append(self.m_dataViewListCtrl4.GetValue(i, 0))
-                        if keycardNo in items:
+                            items.append(self.ticket_keycard_list.GetValue(i, 0))
+                        if keycard_number in items:
                             for i in range(item_count):
-                                if keycardNo == self.m_dataViewListCtrl4.GetValue(i, 0):
-                                    self.m_dataViewListCtrl4.SetValue(status, i, 1)
+                                if keycard_number == self.ticket_keycard_list.GetValue(i, 0):
+                                    self.ticket_keycard_list.SetValue(status, i, 1)
                                     break
                         else:
-                            self.m_dataViewListCtrl4.AppendItem([keycardNo, status])
+                            self.ticket_keycard_list.AppendItem([keycard_number, status])
                 else:
-                    self.m_dataViewListCtrl4.AppendItem([keycardNo, status])
+                    self.ticket_keycard_list.AppendItem([keycard_number, status])
 
-                car_controller.add_car_with_keycard(keycardNo)
-                self.m_radioBtn9.SetValue(False)
-                self.m_staticText41.Disable()
-                self.m_textCtrl31.Disable()
-                self.m_textCtrl31.Value = ''
+                car_controller.add_car_with_keycard(keycard_number)
+                self.keycard_enter_option.SetValue(False)
+                self.keycard_static_text.Disable()
+                self.keycard_textbox.Disable()
+                self.keycard_textbox.Value = ''
 
             else:
                 wx.MessageBox('Keycard does not exist. Enter another', 'Message', wx.OK)
@@ -256,23 +251,23 @@ class MyFrame1(wx.Frame):
             wx.MessageBox('Need to select keycard or ticket', 'Message', wx.OK)
 
     def OnTicketEnterBtn(self, event):
-        self.m_textCtrl31.Value = self.m_textCtrl31.GetLineText(0)
-        self.m_staticText41.Disable()
-        self.m_textCtrl31.Disable()
+        self.keycard_textbox.Value = self.keycard_textbox.GetLineText(0)
+        self.keycard_static_text.Disable()
+        self.keycard_textbox.Disable()
 
     def OnKeycardEnterBtn(self, event):
-        self.m_staticText41.Enable()
-        self.m_textCtrl31.Enable()
-        self.m_textCtrl31.Value = self.m_textCtrl31.GetLineText(0)
+        self.keycard_static_text.Enable()
+        self.keycard_textbox.Enable()
+        self.keycard_textbox.Value = self.keycard_textbox.GetLineText(0)
 
     def OnCarExitClick(self, event):
-        rowNo = self.OnCarSelection(event)
-        selection = self.m_dataViewListCtrl4.GetValue(rowNo, 0)
-        if rowNo is None:
+        row_number = self.OnCarSelection(event)
+        if row_number is None:
             wx.MessageBox('Must select a ticket/keycard from list first', 'Message', wx.OK)
             return
 
-        if self.m_radioBtn10.GetValue() == True:
+        selection = self.ticket_keycard_list.GetValue(row_number, 0)
+        if self.keycard_exit_option.GetValue() == True:
             if selection[0] != 'K':
                 wx.MessageBox('Ticket selected. Must select a keycard or switch to ticket option', 'Warning',
                               wx.OK | wx.ICON_WARNING)
@@ -287,16 +282,16 @@ class MyFrame1(wx.Frame):
 
             car_controller.exit_car_with_keycard(selection)
             wx.MessageBox(f'Exiting with keycard: {selection}', 'Message', wx.OK)
-            self.m_dataViewListCtrl4.SetValue('off lot', rowNo, 1)
-            self.m_radioBtn10.SetValue(False)
+            self.ticket_keycard_list.SetValue('Off Lot', row_number, 1)
+            self.keycard_exit_option.SetValue(False)
 
-        elif self.m_radioBtn11.GetValue() == True:
+        elif self.ticket_exit_option.GetValue() == True:
             if selection[0] != 'T':
                 wx.MessageBox('Keycard selected. Must select a ticket or switch to keycard option', 'Warning',
                               wx.OK | wx.ICON_WARNING)
                 return
 
-            ## Get and check status(Entry/Exit) of car ##
+            # Get and check status(Entry/Exit) of car
             lot_controller.ParkingMovementController.get_parking_movement(ticket_number=selection)
             ticket_history = lot_controller.ParkingMovementController.get_movement_list()
             latest_ticket_status = ticket_history[0][1]
@@ -305,32 +300,32 @@ class MyFrame1(wx.Frame):
                 wx.MessageBox('Ticket already paid for. Select different ticket.', 'Message', wx.OK)
                 return
 
-            if self.paymentOption == 0:
+            if self.payment_option == 0:
                 wx.MessageBox('Select payment option', 'Message', wx.OK)
                 return
             else:
-                if self.m_textCtrl3.Value == '':
+                if self.amount_textbox.Value == '':
                     wx.MessageBox('Input cash amount', 'Message', wx.OK)
                     return
-                payment_type = self.m_choice3.GetString(self.paymentOption)
-                print(payment_type)
-                car_controller.exit_car_with_ticket(selection, float(self.m_textCtrl3.Value), payment_type)
-                wx.MessageBox(f'Exiting with ticket: {selection}\nAmount paid: ${self.m_textCtrl3.Value}', 'Message',
+                payment_type = self.payment_ticket_choices.GetString(self.payment_option)
+                car_controller.exit_car_with_ticket(selection, float(self.amount_textbox.Value), payment_type)
+                wx.MessageBox(f'Exiting with ticket: {selection}\nAmount paid: ${self.amount_textbox.Value}', 'Message',
                               wx.OK)
-                self.m_dataViewListCtrl4.SetValue('off lot', rowNo, 1)
-                self.bSizer21.Clear(True)
-                self.bSizer171.Clear(True)
-                self.bSizer181.Clear(True)
-                self.m_radioBtn11.SetValue(False)
+                self.ticket_keycard_list.SetValue('Off Lot', row_number, 1)
+                self.payment_option = 0
+                self.exit_ticket_payment_text_sizer.Clear(True)
+                self.exit_ticket_payment_choices_sizer.Clear(True)
+                self.exit_ticket_amount_sizer.Clear(True)
+                self.ticket_exit_option.SetValue(False)
                 self.Layout()
 
-        elif self.m_radioBtn6.GetValue() == True:
+        elif self.validation_exit_option.GetValue() == True:
             if selection[0] != 'T':
                 wx.MessageBox('Keycard selected. Must select a ticket or switch to keycard option', 'Warning',
                               wx.OK | wx.ICON_WARNING)
                 return
 
-            ## Get and check status(Entry/Exit) of car ##
+            # Get and check status(Entry/Exit) of car
             lot_controller.ParkingMovementController.get_parking_movement(ticket_number=selection)
             ticket_history = lot_controller.ParkingMovementController.get_movement_list()
             latest_ticket_status = ticket_history[0][1]
@@ -339,111 +334,109 @@ class MyFrame1(wx.Frame):
                 wx.MessageBox('Ticket already paid for. Select different ticket.', 'Message', wx.OK)
                 return
 
-            if self.paymentOption == 0:
+            if self.payment_option == 0:
                 wx.MessageBox('Select payment option', 'Message', wx.OK)
                 return
             else:
-                if self.m_textCtrl2.Value == '':
+                if self.amount_validation_textbox.Value == '':
                     wx.MessageBox('Input cash amount', 'Message', wx.OK)
                     return
-                paymentType = self.m_choice2.GetString(self.paymentOption)
-                print(paymentType)
-                car_controller.exit_car_with_validation(selection, float(self.m_textCtrl2.Value), paymentType)
-                wx.MessageBox(f'Exiting with ticket: {selection}\nAmount paid: ${self.m_textCtrl2.Value}', 'Message',
+                payment_type = self.payment_validations_choices.GetString(self.payment_option)
+                car_controller.exit_car_with_validation(selection, float(self.amount_validation_textbox.Value), payment_type)
+                wx.MessageBox(f'Exiting with ticket: {selection}\nAmount paid: ${self.amount_validation_textbox.Value}', 'Message',
                               wx.OK)
-                self.m_dataViewListCtrl4.SetValue('off lot', rowNo, 1)
-                self.bSizer211.Clear(True)
-                self.bSizer22.Clear(True)
-                self.bSizer23.Clear(True)
-                self.m_radioBtn6.SetValue(False)
+                self.ticket_keycard_list.SetValue('Off Lot', row_number, 1)
+                self.payment_option = 0
+                self.exit_validation_payment_text_sizer.Clear(True)
+                self.exit_validation_payment_choices_sizer.Clear(True)
+                self.exit_validation_amount_sizer.Clear(True)
+                self.validation_exit_option.SetValue(False)
                 self.Layout()
 
         else:
             wx.MessageBox('Need to select keycard/ticket option', 'Message', wx.OK)
 
     def OnKeycardExitBtn(self, event):
-        self.bSizer21.Clear(True)
-        self.bSizer171.Clear(True)
-        self.bSizer181.Clear(True)
-        self.bSizer211.Clear(True)
-        self.bSizer22.Clear(True)
-        self.bSizer23.Clear(True)
+        self.exit_ticket_payment_text_sizer.Clear(True)
+        self.exit_ticket_payment_choices_sizer.Clear(True)
+        self.exit_ticket_amount_sizer.Clear(True)
+        self.exit_validation_payment_text_sizer.Clear(True)
+        self.exit_validation_payment_choices_sizer.Clear(True)
+        self.exit_validation_amount_sizer.Clear(True)
         self.Layout()
 
     def OnTicketExitBtn(self, event):
-        self.bSizer211.Clear(True)
-        self.bSizer22.Clear(True)
-        self.bSizer23.Clear(True)
+        self.exit_validation_payment_text_sizer.Clear(True)
+        self.exit_validation_payment_choices_sizer.Clear(True)
+        self.exit_validation_amount_sizer.Clear(True)
+        self.payment_option = 0
 
-        self.bSizer21.Add((45, 0), 0, wx.EXPAND, 5)
-        self.m_staticText21 = wx.StaticText(self, wx.ID_ANY, u"Payment:", wx.DefaultPosition, wx.DefaultSize, 0)
-        self.m_staticText21.Wrap(-1)
-        self.bSizer21.Add(self.m_staticText21, 0, wx.ALL, 5)
+        self.exit_ticket_payment_text_sizer.Add((45, 0), 0, wx.EXPAND, 5)
+        self.payment_ticket_static_text = wx.StaticText(self, wx.ID_ANY, u"Payment:", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.payment_ticket_static_text.Wrap(-1)
+        self.exit_ticket_payment_text_sizer.Add(self.payment_ticket_static_text, 0, wx.ALL, 5)
 
-        self.bSizer171.Add((45, 0), 0, wx.EXPAND, 5)
-        m_choice3Choices = [wx.EmptyString, u"Cash", u"Credit", u"Debit"]
-        self.m_choice3 = wx.Choice(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_choice3Choices, 0)
-        self.m_choice3.SetSelection(0)
-        self.bSizer171.Add(self.m_choice3, 0, wx.ALL, 5)
+        self.exit_ticket_payment_choices_sizer.Add((45, 0), 0, wx.EXPAND, 5)
+        payment_tickets = [wx.EmptyString, u"Cash", u"Credit", u"Debit"]
+        self.payment_ticket_choices = wx.Choice(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, payment_tickets, 0)
+        self.payment_ticket_choices.SetSelection(0)
+        self.exit_ticket_payment_choices_sizer.Add(self.payment_ticket_choices, 0, wx.ALL, 5)
 
-        self.m_choice3.Bind(wx.EVT_CHOICE, self.OnPaymentChoice)
+        self.payment_ticket_choices.Bind(wx.EVT_CHOICE, self.OnPaymentChoice)
 
-        self.bSizer181.Add((45, 0), 0, wx.EXPAND, 5)
-        self.m_staticText4 = wx.StaticText(self, wx.ID_ANY, u"Enter amount:", wx.DefaultPosition, wx.DefaultSize, 0)
-        self.m_staticText4.Wrap(-1)
-        self.bSizer181.Add(self.m_staticText4, 0, wx.ALL, 5)
+        self.exit_ticket_amount_sizer.Add((45, 0), 0, wx.EXPAND, 5)
+        self.amount_ticket_static_text = wx.StaticText(self, wx.ID_ANY, u"Enter amount:", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.amount_ticket_static_text.Wrap(-1)
+        self.exit_ticket_amount_sizer.Add(self.amount_ticket_static_text, 0, wx.ALL, 5)
 
-        self.m_textCtrl3 = wx.TextCtrl(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0)
-        self.bSizer181.Add(self.m_textCtrl3, 0, wx.ALL, 5)
+        self.amount_textbox = wx.TextCtrl(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0)
+        self.exit_ticket_amount_sizer.Add(self.amount_textbox, 0, wx.ALL, 5)
 
         self.Layout()
 
     def OnValidationExitBtn(self, event):
-        self.bSizer21.Clear(True)
-        self.bSizer171.Clear(True)
-        self.bSizer181.Clear(True)
+        self.exit_ticket_payment_text_sizer.Clear(True)
+        self.exit_ticket_payment_choices_sizer.Clear(True)
+        self.exit_ticket_amount_sizer.Clear(True)
+        self.payment_option = 0
 
-        self.bSizer211.Add((45, 0), 0, wx.EXPAND, 5)
-        self.m_staticText5 = wx.StaticText(self, wx.ID_ANY, u"Payment", wx.DefaultPosition, wx.DefaultSize, 0)
-        self.m_staticText5.Wrap(-1)
-        self.bSizer211.Add(self.m_staticText5, 0, wx.ALL, 5)
+        self.exit_validation_payment_text_sizer.Add((45, 0), 0, wx.EXPAND, 5)
+        self.payment_validation_static_text = wx.StaticText(self, wx.ID_ANY, u"Payment", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.payment_validation_static_text.Wrap(-1)
+        self.exit_validation_payment_text_sizer.Add(self.payment_validation_static_text, 0, wx.ALL, 5)
 
-        self.bSizer22.Add((45, 0), 0, wx.EXPAND, 5)
-        m_choice2Choices = [wx.EmptyString, u"Disability", u"Child", u"Senior"]
-        self.m_choice2 = wx.Choice(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_choice2Choices, 0)
-        self.m_choice2.SetSelection(0)
-        self.bSizer22.Add(self.m_choice2, 0, wx.ALL, 5)
+        self.exit_validation_payment_choices_sizer.Add((45, 0), 0, wx.EXPAND, 5)
+        payment_validations = [wx.EmptyString, u"Disability", u"Child", u"Senior"]
+        self.payment_validations_choices = wx.Choice(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, payment_validations, 0)
+        self.payment_validations_choices.SetSelection(0)
+        self.exit_validation_payment_choices_sizer.Add(self.payment_validations_choices, 0, wx.ALL, 5)
 
-        self.m_choice2.Bind(wx.EVT_CHOICE, self.OnPaymentChoice)
+        self.payment_validations_choices.Bind(wx.EVT_CHOICE, self.OnPaymentChoice)
 
-        self.bSizer23.Add((45, 0), 0, wx.EXPAND, 5)
-        self.m_staticText4 = wx.StaticText(self, wx.ID_ANY, u"Enter amount:", wx.DefaultPosition, wx.DefaultSize, 0)
-        self.m_staticText4.Wrap(-1)
-        self.bSizer23.Add(self.m_staticText4, 0, wx.ALL, 5)
+        self.exit_validation_amount_sizer.Add((45, 0), 0, wx.EXPAND, 5)
+        self.amount_ticket_static_text = wx.StaticText(self, wx.ID_ANY, u"Enter amount:", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.amount_ticket_static_text.Wrap(-1)
+        self.exit_validation_amount_sizer.Add(self.amount_ticket_static_text, 0, wx.ALL, 5)
 
-        self.m_textCtrl2 = wx.TextCtrl(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0)
-        self.bSizer23.Add(self.m_textCtrl2, 0, wx.ALL, 5)
+        self.amount_validation_textbox = wx.TextCtrl(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0)
+        self.exit_validation_amount_sizer.Add(self.amount_validation_textbox, 0, wx.ALL, 5)
 
         self.Layout()
 
     def OnPaymentChoice(self, event):
-        self.paymentOption = event.GetSelection()
+        self.payment_option = event.GetSelection()
 
-    def OnCardPayment(self, event):
-        wx.MessageBox('Card swiped!', 'Message', wx.OK)
-        self.cardPayment = True
+    def OnEntryGateBox(self, event):
+        pass
 
-    def OnGateOpenBtn(self, event):
-        wx.MessageBox('Gate open', 'Message', wx.OK)
-
-    def OnGateCloseBtn(self, event):
-        wx.MessageBox('Gate close', 'Message', wx.OK)
+    def OnExitGateBox(self, event):
+        pass
 
 
 def main():
     app = wx.App()
-    mainFrame = MyFrame1(None)
-    mainFrame.Show()
+    testing_frame = TestingFrame(None)
+    testing_frame.Show()
     app.MainLoop()
 
 
